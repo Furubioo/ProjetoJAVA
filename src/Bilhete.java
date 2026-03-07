@@ -54,7 +54,7 @@ public class Bilhete {
         this.cpf = cpf;
     }
 
-    public void setSala(Sala sala) {
+    public void setSala(int sala) {
         this.sala = sala;
     }
 
@@ -73,4 +73,7 @@ public class Bilhete {
     public void setCadeiras(int[][] cadeiras) {
         this.cadeiras = cadeiras;
     }
+
+
+
 }

@@ -4,11 +4,11 @@ public class Compra {
     private Bilhete[] bilhetes;
     private int qtdBilhetes;
 
-    public Compra(String[] lanches, int qtdlanches, Bilhete[] bilhetes, int qtdBilhetes) {
+    public Compra() {
         this.lanches = new String[15];
-        this.qtdLanches = qtdlanches;
+        this.qtdLanches = 0;
         this.bilhetes = new Bilhete[15];
-        this.qtdBilhetes = qtdBilhetes;
+        this.qtdBilhetes = 0;
     }
 
     public String[] getLanches() {

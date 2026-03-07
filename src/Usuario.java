@@ -94,15 +94,15 @@ public class Usuario {
     }
 
     public void realizarCompra(){
-        System.out.println("O "+getUser()+" iniciou a compra.");
+        System.out.println(getUser()+" iniciou a compra.");
     }
 
     public void alterarCompra(){
-        System.out.println("O "+getUser()+" solicitou a alteração da compra.");
+        System.out.println(getUser()+" solicitou a alteração da compra.");
     }
 
     public void cancelarCompra(){
-        System.out.println("O "+getUser()+" solicitou o cancelamento da compra.");
+        System.out.println(getUser()+" solicitou o cancelamento da compra.");
     }
     
 }

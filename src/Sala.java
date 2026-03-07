@@ -13,6 +13,17 @@ public class Sala {
         this.listaSessoes = listaSessoes;
     }
 
+    public void adicionarSessao(Sessao sessao, int horario){
+        if(horario >= 0 && horario < listaSessoes.length){
+            this.listaSessoes[horario] = sessao;
+        }
+
+        else{
+            System.out.println("Horário inválido para esta sala.");
+        }
+
+
+    }
     
     
 }

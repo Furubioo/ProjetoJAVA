@@ -3,7 +3,7 @@ Sistema de Cinema
 Descrição:
 O atual projeto em Java busca desenvolver para a disciplina de programação orientada 
 a objetos(POO) um sistema de cinema utilizando conceitos ministrados em sala de aula
-(construtores, métodos getters e setters e utilização, dado que os atributos são 
+(construtores, métodos getters e setters, dado que os atributos são 
 privados e os métodos, públicos.)
 
 Integrantes:

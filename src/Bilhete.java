@@ -1,13 +1,13 @@
 public class Bilhete {
     private String user;
-    private int cpf;
+    private String cpf;
     private int sala;
     private Sessao sessao;
     private Filme filme;
     private double valor;
     private int[][] cadeiras = new int[10][15];  
 
-    public Bilhete(String user, int cpf, int sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
+    public Bilhete(String user, String cpf, int sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
         this.user = user;
         this.cpf = cpf;
         this.sala = sala;
@@ -22,7 +22,7 @@ public class Bilhete {
         return user;
     }
 
-    public int getCpf() {
+    public String getCpf() {
         return cpf;
     }
 
@@ -50,7 +50,7 @@ public class Bilhete {
         this.user = user;
     }
 
-    public void setCpf(int cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 

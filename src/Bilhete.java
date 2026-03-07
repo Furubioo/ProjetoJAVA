@@ -1,13 +1,13 @@
 public class Bilhete {
     private String user;
     private int cpf;
-    private Sala sala;
+    private int sala;
     private Sessao sessao;
     private Filme filme;
     private double valor;
     private int[][] cadeiras = new int[10][15];  
 
-    public Bilhete(String user, int cpf, Sala sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
+    public Bilhete(String user, int cpf, int sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
         this.user = user;
         this.cpf = cpf;
         this.sala = sala;
@@ -26,7 +26,7 @@ public class Bilhete {
         return cpf;
     }
 
-    public Sala getSala() {
+    public int getSala() {
         return sala;
     }
 

@@ -4,7 +4,7 @@ Descrição:
 O atual projeto em Java busca desenvolver para a disciplina de programação orientada 
 a objetos(POO) um sistema de cinema utilizando conceitos ministrados em sala de aula
 (construtores, métodos getters e setters, dado que os atributos são 
-privados e os métodos, públicos.)
+privados e os métodos, públicos).
 
 Integrantes:
 - Flávio Daniel

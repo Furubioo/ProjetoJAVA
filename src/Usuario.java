@@ -92,5 +92,17 @@ public class Usuario {
     public void setCodigocartao(String codigoCartao){
         this.codigoCartao = codigoCartao;
     }
+
+    public void realizarCompra(){
+        System.out.println("O "+getUser()+" iniciou a compra.");
+    }
+
+    public void alterarCompra(){
+        System.out.println("O "+getUser()+" solicitou a alteração da compra.");
+    }
+
+    public void cancelarCompra(){
+        System.out.println("O "+getUser()+" solicitou o cancelamento da compra.");
+    }
     
 }

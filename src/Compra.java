@@ -1,14 +1,14 @@
 public class Compra {
     private String[] lanches;
-    private int qtdlanches;
+    private int qtdLanches;
     private Bilhete[] bilhetes;
-    private int qtdbilhetes;
+    private int qtdBilhetes;
 
     public Compra(String[] lanches, int qtdlanches, Bilhete[] bilhetes, int qtdBilhetes) {
         this.lanches = new String[15];
-        this.qtdlanches = qtdlanches;
+        this.qtdLanches = qtdlanches;
         this.bilhetes = new Bilhete[15];
-        this.qtdbilhetes = qtdBilhetes;
+        this.qtdBilhetes = qtdBilhetes;
     }
 
     public String[] getLanches() {
@@ -16,7 +16,7 @@ public class Compra {
     }
 
     public int getQtdlanches() {
-        return qtdlanches;
+        return qtdLanches;
     }
 
     public Bilhete[] getBilhetes() {
@@ -24,7 +24,7 @@ public class Compra {
     }
 
     public int getQtdbilhetes() {
-        return qtdbilhetes;
+        return qtdBilhetes;
     }
 
     public void setLanches(String[] lanches) {
@@ -32,7 +32,7 @@ public class Compra {
     }
 
     public void setQtdlanches(int qtdlanches) {
-        this.qtdlanches = qtdlanches;
+        this.qtdLanches = qtdlanches;
     }
 
     public void setBilhetes(Bilhete[] bilhetes) {
@@ -40,13 +40,28 @@ public class Compra {
     }
 
     public void setQtdbilhetes(int qtdbilhetes) {
-        this.qtdbilhetes = qtdbilhetes;
-    }
-    
-    public void adicionarLanche(String lanches) {
-        
+        this.qtdBilhetes = qtdbilhetes;
     }
 
+    public void comprarBilhetes(Bilhete novoBilhete) {
+
+        if (qtdBilhetes < 15) {
+            this.bilhetes[qtdBilhetes] = novoBilhete;
+            this.qtdBilhetes++;
+            System.out.println("Bilhete(s) comprado(s): ");
+        }
+        else {
+            System.out.println("Não é mais possível comprar bilhetes");
+        }
+
+    }
+
+    public void adicionarLanche(String lanche) {
+        if (qtdLanches < 15) {
+            this.lanches[qtdLanches] = lanche;
+            this.qtdLanches++;
+        }
+    }
 
 
 

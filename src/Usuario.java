@@ -1,15 +1,15 @@
 public class Usuario {
     private String user;
-    private int cpf;
+    private String cpf;
     private String senha;
     private int idade;
     private char sexo;
     private String email;
     private String nomeCartao;
-    private int numeroCartao;
-    private int codigoCartao;
+    private String numeroCartao;
+    private String codigoCartao;
 
-    public Usuario(String user, int cpf, String senha, int idade, char sexo, String email, String nomeCartao, int numeroCartao, int codigoCartao){
+    public Usuario(String user, String cpf, String senha, int idade, char sexo, String email, String nomeCartao, String numeroCartao, String codigoCartao){
         this.user = user;
         this.cpf = cpf;
         this.senha = senha;
@@ -25,7 +25,7 @@ public class Usuario {
         return user;
     }
     
-    public int getCpf(){
+    public String getCpf(){
         return cpf;
     }
 
@@ -49,11 +49,11 @@ public class Usuario {
         return nomeCartao;
     }
 
-    public int getNumerocartao(){
+    public String getNumerocartao(){
         return numeroCartao;
     }
 
-    public int getCodigocartao(){
+    public String getCodigocartao(){
         return codigoCartao;
     }
 
@@ -61,7 +61,7 @@ public class Usuario {
         this.user = user;
     }
 
-    public void setCpf(int cpf){
+    public void setCpf(String cpf){
         this.cpf = cpf;
     }
 
@@ -85,11 +85,11 @@ public class Usuario {
         this.nomeCartao = nomeCartao;
     }
 
-    public void setNumerocartao(int numeroCartao){
+    public void setNumerocartao(String numeroCartao){
         this.numeroCartao = numeroCartao;
     }
 
-    public void setCodigocartao(int codigoCartao){
+    public void setCodigocartao(String codigoCartao){
         this.codigoCartao = codigoCartao;
     }
     

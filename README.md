@@ -8,7 +8,8 @@ privados e os métodos, públicos).
 
 Integrantes:
 - Flávio Daniel
-- Maria Clara 
+- Maria Clara
+- João Pedro 
 
 Como executar:
 1. Clonar o repositório

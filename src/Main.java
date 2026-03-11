@@ -20,7 +20,7 @@ public class Main {
 
         s1.getCadeiras()[5][7] = true;
 
-        Bilhete bilheteMaria = new Bilhete(u1.getUser(), u1.getCpf(), 1, s1, f1, f1.getValor(), cadeirasEscolhidas);
+        Bilhete bilheteMaria = new Bilhete(u1, 1, s1, f1, f1.getValor(), cadeirasEscolhidas);
 
         Compra compraAtual = new Compra();
         compraAtual.comprarBilhetes(bilheteMaria);

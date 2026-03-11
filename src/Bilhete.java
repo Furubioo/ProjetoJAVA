@@ -1,15 +1,13 @@
 public class Bilhete {
-    private String user;
-    private String cpf;
+    private Usuario user;
     private int sala;
     private Sessao sessao;
     private Filme filme;
     private double valor;
     private int[][] cadeiras = new int[10][15];  
 
-    public Bilhete(String user, String cpf, int sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
+    public Bilhete(Usuario user, int sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
         this.user = user;
-        this.cpf = cpf;
         this.sala = sala;
         this.sessao = sessao;
         this.filme = filme;
@@ -18,12 +16,8 @@ public class Bilhete {
 
     }
 
-    public String getUser() {
+    public Usuario getUser() {
         return user;
-    }
-
-    public String getCpf() {
-        return cpf;
     }
 
     public int getSala() {
@@ -46,12 +40,8 @@ public class Bilhete {
         return cadeiras;
     }
 
-    public void setUser(String user) {
+    public void setUser(Usuario user) {
         this.user = user;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
     }
 
     public void setSala(int sala) {
@@ -73,7 +63,5 @@ public class Bilhete {
     public void setCadeiras(int[][] cadeiras) {
         this.cadeiras = cadeiras;
     }
-
-
 
 }

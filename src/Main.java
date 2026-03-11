@@ -28,9 +28,10 @@ public class Main {
         compraAtual.adicionarLanche("Refrigerante 500ml");
 
         System.out.println("\n*** RESUMO DA COMPRA ***");
-        System.out.println("Cliente: "+u1.getUser());
-        System.out.println("Filme: "+compraAtual.getBilhetes()[0].getFilme().getNome());
+        System.out.println("Cliente: "+ u1.getUser());
+        System.out.println("Filme: "+ compraAtual.getBilhetes()[0].getFilme().getNome());
         System.out.println("Sessão: "+ compraAtual.getBilhetes()[0].getSessao().getHorario());
+        System.out.println("Cadeira do cliente: " +bilheteMaria.LocalCadeiras(cadeirasEscolhidas));
         System.out.println("Valor do ingresso: R$ "+compraAtual.getBilhetes()[0].getValor());
 
 

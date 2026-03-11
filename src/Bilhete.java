@@ -64,4 +64,21 @@ public class Bilhete {
         this.cadeiras = cadeiras;
     }
 
+    public String LocalCadeiras(int[][] cadeiras) {
+
+        String c = "";
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 15; j++) {
+                if (cadeiras[i][j] == 1) {
+                    char a = (char) ('A' + i);
+                    c = a + "" + j;
+                }
+            }
+        }
+
+        return c; 
+    }
+
+
 }

@@ -44,7 +44,6 @@ public class Critica{
     }
 
     public void atribuirCritica(Filme filme, String critica) {
-        filme.setCritica(critica);
         for (int i = this.vetorcriticas.length-1; i >= 0; i--) {
             if (this.vetorcriticas[i] == null) {
                 this.vetorcriticas[i] = critica;

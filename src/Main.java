@@ -34,6 +34,10 @@ public class Main {
         System.out.println("Cadeira do cliente: " +bilheteMaria.LocalCadeiras(cadeirasEscolhidas));
         System.out.println("Valor do ingresso: R$ "+compraAtual.getBilhetes()[0].getValor());
 
+        CupomPromocional cupom1 = CupomPromocional.DESCONTO10;
+        System.out.println(cupom1);
+        System.out.println(cupom1.getDesconto());
+
 
     }
 }

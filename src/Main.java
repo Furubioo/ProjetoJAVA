@@ -2,8 +2,8 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("*** INICIANDO SISTEMA DE CINEMA ***\n");
         
-        Filme f1 = new Filme("Gato de botas 2", 100,"O gato de botas descobre que a sua paixão pela aventura cobra seu preço...",20.0);
-        Filme f2 = new Filme("John Wick 4", 169, "John Wick enfrenta os seus adversários mais letais nesta próxima quarta parte da série",25.0);
+        Filme f1 = new Filme("Gato de botas 2", 100,"O gato de botas descobre que a sua paixão pela aventura cobra seu preço...", 20.0);
+        Filme f2 = new Filme("John Wick 4", 169, "John Wick enfrenta os seus adversários mais letais nesta próxima quarta parte da série", 25.0);
 
         Sessao s1 = new Sessao(f1,"08:00 - 10:00");
         Sessao s2 = new Sessao(f2,"16:00 - 18:00");

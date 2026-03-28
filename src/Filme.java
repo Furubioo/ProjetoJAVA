@@ -5,10 +5,10 @@ public class Filme {
     private double valor;
     private double nota;
     private int quantidade_criticos;
-    private String critica;
+    private Critica critica;
     
     
-    public Filme(String nome, int duracao, String sinopse, double valor, double nota, int quantidade_criticos, String critica) {
+    public Filme(String nome, int duracao, String sinopse, double valor, double nota, int quantidade_criticos, Critica critica) {
         this.nome = nome;
         this.duracao = duracao;
         this.sinopse = sinopse;
@@ -78,11 +78,11 @@ public class Filme {
         this.quantidade_criticos = quantidade_criticos;
     }
 
-    public String getCritica() {
+    public Critica getCritica() {
         return critica;
     }
 
-    public void setCritica(String critica) {
+    public void setCritica(Critica critica) {
         this.critica = critica;
     }
 

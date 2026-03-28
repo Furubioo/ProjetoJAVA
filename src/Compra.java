@@ -1,22 +1,22 @@
 public class Compra {
-    private String[] lanches;
-    private int qtdLanches;
+    private String[] produto;
+    private int qtdProdutos;
     private Bilhete[] bilhetes;
     private int qtdBilhetes;
 
     public Compra() {
-        this.lanches = new String[15];
-        this.qtdLanches = 0;
+        this.produto = new String[15];
+        this.qtdProdutos = 0;
         this.bilhetes = new Bilhete[15];
         this.qtdBilhetes = 0;
     }
 
-    public String[] getLanches() {
-        return lanches;
+    public String[] getProduto() {
+        return produto;
     }
 
-    public int getQtdlanches() {
-        return qtdLanches;
+    public int getQtdProdutos() {
+        return qtdProdutos;
     }
 
     public Bilhete[] getBilhetes() {
@@ -27,12 +27,12 @@ public class Compra {
         return qtdBilhetes;
     }
 
-    public void setLanches(String[] lanches) {
-        this.lanches = lanches;
+    public void setProduto(String[] produto) {
+        this.produto = produto;
     }
 
-    public void setQtdlanches(int qtdlanches) {
-        this.qtdLanches = qtdlanches;
+    public void setQtdProdutos(int qtdprodutos) {
+        this.qtdProdutos = qtdprodutos;
     }
 
     public void setBilhetes(Bilhete[] bilhetes) {
@@ -56,12 +56,28 @@ public class Compra {
 
     }
 
-    public void adicionarLanche(String lanche) {
-        if (qtdLanches < 15) {
-            this.lanches[qtdLanches] = lanche;
-            this.qtdLanches++;
+    public void adicionarProduto(String produto) {
+        if (qtdProdutos < 15) {
+            this.produto[qtdProdutos] = produto;
+            this.qtdProdutos++;
         }
     }
 
+
+    public void comprarBilhetes(Bilhete novoBilhete,CupomPromocional desconto){
+        
+        if (qtdBilhetes < 15) {
+            this.bilhetes[qtdBilhetes] = novoBilhete;
+            this.qtdBilhetes++;
+            System.out.println("Bilhete(s) comprado(s): ");
+        }
+        else {
+            System.out.println("Não é mais possível comprar bilhetes");
+        }
+    }
+  
     
+
 }
+
+

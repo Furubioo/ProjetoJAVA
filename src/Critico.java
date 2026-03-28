@@ -6,6 +6,14 @@ public class Critico extends Usuario{
         this.origem = origem;
     }
 
+    public String getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(String origem) {
+        this.origem = origem;
+    }
+
     @Override // Para evitar a criação de um método novo em vez de sobrescrever o antigo
     public double calcularPrecoFinal(double precoBase){
         precoBase = 0;

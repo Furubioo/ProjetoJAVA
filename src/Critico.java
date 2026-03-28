@@ -20,5 +20,23 @@ public class Critico extends Usuario{
         return precoBase;
     }
 
+    
+    public void atribuirNota(Filme filme, double nota) {
+        filme.setQuantidade_criticos(filme.getQuantidade_criticos() + 1);
+        filme.setNota((filme.getNota() + nota) / filme.getQuantidade_criticos());
+
+    }
+
+    public void atribuirCritica(Filme filme, String critica) {
+        String[] vet = filme.getVetorcriticas();
+        
+        for (int i = vet.length-1; i >= 0; i--) {
+            if (vet[i] == null) {
+                vet[i] = critica;
+                break;
+            }
+        }
+    }
+
 
 }

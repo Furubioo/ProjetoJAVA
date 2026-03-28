@@ -1,4 +1,27 @@
 public class Main {
+
+    private static void imprimirRecibo(Compra compra, Bilhete bilhete, int[][] cadeiras, String perfilCliente) {
+        System.out.println("\n*** RECIBO FINAL ***");
+        System.out.println("\n---- Bilhete(s) Comprado(s) ----");
+        System.out.println("Cliente: "+compra.getBilhetes()[0].getUser().getUser()+ "("+ perfilCliente + ")");
+        System.out.println("Filme: "+compra.getBilhetes()[0].getFilme().getNome());
+        System.out.println("Horário: "+compra.getBilhetes()[0].getSessao().getHorario());
+        System.out.println("Assento escolhido: "+bilhete.LocalCadeiras(cadeiras));
+        System.out.println("Valor do ingresso pago: "+compra.getBilhetes()[0].getValor());
+
+        System.out.println("\n Produtos adquiridos: ");
+        if (compra.getQtdProdutos() == 0) {
+            System.out.println("- Nenhum produto adquirido.");
+        }
+        else {
+            for(int i = 0; i < compra.getQtdProdutos();i++){
+                System.out.println("- " +compra.getProduto()[i]+" | R$ "+compra.getValorProduto()[i]);
+            }
+        }
+        System.out.println("-----------------------------------\n");
+
+    }
+
     public static void main(String[] args) {
         System.out.println("*** INICIANDO SISTEMA DE CINEMA ***\n");
 
@@ -16,44 +39,55 @@ public class Main {
         salaVip.adicionarSessao(s2, 1);
 
 
-        Usuario uNormal = new Usuario("João", "11123475678", "123", 30, 'm', "joaopedro@gmail.com", "Joao p silva", "45698254145", "587");
+        Usuario uNormal = new Usuario("Carol", "11123475678", "123", 30, 'm', "joaopedro@gmail.com", "Joao p silva", "45698254145", "587");
         Critico uCritico = new Critico("Carlos", "12345678910", "123", 25, 'm', "carlosjose@gmail.com", "Carlos j silva", "54237896341","345","Delart");
-        Estudante uEstudante = new Estudante("Carol", "86687570365", "236", 22, 'f', "carolmaria@gmail.com", "Carol m Dantas","25418791237","763");
+        Estudante uEstudante = new Estudante("João", "86687570365", "236", 22, 'f', "carolmaria@gmail.com", "Carol m Dantas","25418791237","763");
         
-        System.out.println("--- AVALIAÇÕES DA CRÍTICA --- ");
-        uCritico.atribuirNota(f1,9.5);
-        uCritico.atribuirCritica(f1,"Uma obra-prima absoluta do cinema moderno!");
-        System.out.println("O crítico " +uCritico.getUser()+ " da origem " +uCritico.getOrigem()+ " avaliou o filme: " +f1.getNome());
-        System.out.println("Nota atual do filme " +f1.getNome()+ ": "+f1.getNota()+ " (" +f1.getQuantidade_criticos()+ " crítica(s) registrada(s))");
+
+        //Usuário normal
+        int[][] cadeirasCarol = new int[10][15];
+        cadeirasCarol[3][5] = 1;
+        s2.getCadeiras()[3][5] = true;
+
+        double precoCarol = uNormal.calcularPrecoFinal(f2.getValor());
+        Bilhete bilheteCarol = new Bilhete(uNormal, 1, s2, f2, precoCarol, cadeirasCarol);
+
+        Compra compraCarol = new Compra();
+        compraCarol.comprarBilhetes(bilheteCarol);
+        compraCarol.adicionarProduto(Produto.PIPOCA_GRANDE.name(), Produto.PIPOCA_GRANDE.getPreco(), CupomPromocional.DESCONTO10);
+        compraCarol.adicionarProduto(Produto.REFRIGERANTE_500ML.name(), Produto.REFRIGERANTE_500ML.getPreco());
+
+        imprimirRecibo(compraCarol, bilheteCarol, cadeirasCarol, "Estudante");
 
 
+        //Usuário estudante
         int [][] cadeirasJoao = new int[10][15];
         cadeirasJoao[3][5] = 1;
         s2.getCadeiras()[3][5] = true;
 
         double precoIngressoJoao = uEstudante.calcularPrecoFinal(f2.getValor());
-
         Bilhete bilheteJoao = new Bilhete(uEstudante, 1, s2, f2, precoIngressoJoao, cadeirasJoao);
 
         Compra compraJoao = new Compra();
         compraJoao.comprarBilhetes(bilheteJoao);
-
-
         compraJoao.adicionarProduto(Produto.PIPOCA_GRANDE.name(),Produto.PIPOCA_GRANDE.getPreco(),CupomPromocional.DESCONTO10);
         compraJoao.adicionarProduto(Produto.REFRIGERANTE_500ML.name(),Produto.REFRIGERANTE_500ML.getPreco());
 
+        imprimirRecibo(compraJoao, bilheteJoao, cadeirasJoao, "Normal");
 
-        System.out.println("\n*** RECIBO FINAL ***");
-        System.out.println("Cliente: "+compraJoao.getBilhetes()[0].getUser().getUser()+" (Estudante)");
-        System.out.println("Filme: "+compraJoao.getBilhetes()[0].getFilme().getNome());
-        System.out.println("Horário: "+compraJoao.getBilhetes()[0].getSessao().getHorario());
-        System.out.println("Assento escolhido: "+bilheteJoao.LocalCadeiras(cadeirasJoao));
-        System.out.println("Valor do ingresso pago: "+compraJoao.getBilhetes()[0].getValor());
 
-        System.out.println("\n Produtos adquiridos: ");
-        for(int i = 0; i < compraJoao.getQtdProdutos();i++){
-            System.out.println("- " +compraJoao.getProduto()[i]+" | R$ "+compraJoao.getValorProduto()[i]);
-        }
+        //Usuário crítico
+        int[][] cadeirasCarlos = new int[10][15];
+        cadeirasCarlos[5][5] = 1;
+        s1.getCadeiras()[5][5] = true;
+
+        double precoCarlos = uCritico.calcularPrecoFinal(f1.getValor());
+        Bilhete bilheteCarlos = new Bilhete(uCritico, 3, s1, f1, precoCarlos, cadeirasCarlos);
+
+        Compra compraCarlos = new Compra();
+        compraCarlos.comprarBilhetes(bilheteCarlos);
+
+        imprimirRecibo(compraCarlos, bilheteCarlos, cadeirasCarlos, "Crítico");
 
     }
 }

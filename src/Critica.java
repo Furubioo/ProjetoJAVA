@@ -2,7 +2,7 @@ public class Critica{
     private String nome;
     private String origem;
     private String mensagem;
-    private String[] vetorcriticas = new String[100];
+    
 
 
     public Critica(String nome, String origem, String mensagem) {
@@ -30,31 +30,4 @@ public class Critica{
         this.mensagem = mensagem;
     }
 
-    public String[] getVetorcriticas() {
-        return vetorcriticas;
-    }
-
-    public void setVetorcriticas(String[] vetorcriticas) {
-        this.vetorcriticas = vetorcriticas;
-    }
-
-    public void atribuirNota(Filme filme, double nota) {
-        filme.setNota(nota);
-        filme.setQuantidade_criticos(filme.getQuantidade_criticos() + 1);
-    }
-
-    public void atribuirCritica(Filme filme, String critica) {
-        for (int i = this.vetorcriticas.length-1; i >= 0; i--) {
-            if (this.vetorcriticas[i] == null) {
-                this.vetorcriticas[i] = critica;
-                break;
-            }
-        }
-
-    }
-
-
-    
-
-    
 }

@@ -6,16 +6,17 @@ public class Filme {
     private double nota;
     private int quantidade_criticos;
     private Critica critica;
+    private String[] vetorcriticas = new String[100];
     
     
-    public Filme(String nome, int duracao, String sinopse, double valor, double nota, int quantidade_criticos, Critica critica) {
+    public Filme(String nome, int duracao, String sinopse, double valor) {
         this.nome = nome;
         this.duracao = duracao;
         this.sinopse = sinopse;
         this.valor = valor;
-        this.nota = nota;
-        this.quantidade_criticos = quantidade_criticos;
-        this.critica = critica;
+        this.nota = 0;
+        this.quantidade_criticos = 0;
+        this.critica =  new Critica(nome, "sistema", "Mural inicial");
     }
 
 
@@ -86,7 +87,13 @@ public class Filme {
         this.critica = critica;
     }
 
+    public String[] getVetorcriticas(){
+        return vetorcriticas;
+    }
 
+    public void setVetorcriticas(String[] vetorcriticas){
+        this.vetorcriticas = vetorcriticas;
+    }
 
 
 } 

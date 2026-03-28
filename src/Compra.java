@@ -58,7 +58,6 @@ public class Compra {
         if (qtdBilhetes < 15) {
             this.bilhetes[qtdBilhetes] = novoBilhete;
             this.qtdBilhetes++;
-            System.out.println("Bilhete(s) comprado(s): ");
         }
         else {
             System.out.println("Não é mais possível comprar bilhetes");
@@ -83,7 +82,6 @@ public class Compra {
             novoBilhete.setValor(novoBilhete.getValor() - novoBilhete.getValor() * cupom.getDesconto());
             this.bilhetes[qtdBilhetes] = novoBilhete;
             this.qtdBilhetes++;
-            System.out.println("Bilhete(s) comprado(s): ");
         }
         else {
             System.out.println("Não é mais possível comprar bilhetes");
@@ -97,7 +95,6 @@ public class Compra {
             this.valorProduto[qtdProdutos] = valor;
             this.qtdProdutos++;
         }
-        
         else {
             System.out.println("Não é mais possivel comprar produtos.");
         }

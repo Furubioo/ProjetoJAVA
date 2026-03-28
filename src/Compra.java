@@ -1,12 +1,14 @@
 public class Compra {
     private String[] produto;
     private int qtdProdutos;
+    private double[] valorProduto;
     private Bilhete[] bilhetes;
     private int qtdBilhetes;
 
     public Compra() {
         this.produto = new String[15];
         this.qtdProdutos = 0;
+        this.valorProduto = new double[15];
         this.bilhetes = new Bilhete[15];
         this.qtdBilhetes = 0;
     }
@@ -17,6 +19,10 @@ public class Compra {
 
     public int getQtdProdutos() {
         return qtdProdutos;
+    }
+
+    public double[] getValorProduto(){
+        return valorProduto;
     }
 
     public Bilhete[] getBilhetes() {
@@ -33,6 +39,10 @@ public class Compra {
 
     public void setQtdProdutos(int qtdprodutos) {
         this.qtdProdutos = qtdprodutos;
+    }
+
+    public void setValorProduto(double[] valorProduto){
+        this.valorProduto = valorProduto;
     }
 
     public void setBilhetes(Bilhete[] bilhetes) {
@@ -56,17 +66,21 @@ public class Compra {
 
     }
 
-    public void adicionarProduto(String produto) {
+    public void adicionarProduto(String produto, double valor) {
         if (qtdProdutos < 15) {
             this.produto[qtdProdutos] = produto;
+            this.valorProduto[qtdProdutos] = valor;
             this.qtdProdutos++;
+        }
+        else{
+            System.out.println("Não é mais possivel comprar produtos.");
         }
     }
 
-
-    public void comprarBilhetes(Bilhete novoBilhete,CupomPromocional desconto){
+    public void comprarBilhetes(Bilhete novoBilhete,CupomPromocional cupom){
         
         if (qtdBilhetes < 15) {
+            novoBilhete.setValor(novoBilhete.getValor() - novoBilhete.getValor() * cupom.getDesconto());
             this.bilhetes[qtdBilhetes] = novoBilhete;
             this.qtdBilhetes++;
             System.out.println("Bilhete(s) comprado(s): ");
@@ -75,9 +89,19 @@ public class Compra {
             System.out.println("Não é mais possível comprar bilhetes");
         }
     }
-  
-    
 
+    public void adicionarProduto(String produto,double valor,CupomPromocional cupom){
+        if (qtdProdutos < 15) {
+            this.produto[qtdProdutos] = produto;
+            valor = valor - (valor * cupom.getDesconto());
+            this.valorProduto[qtdProdutos] = valor;
+            this.qtdProdutos++;
+        }
+        
+        else {
+            System.out.println("Não é mais possivel comprar produtos.");
+        }
+    }
 }
 
 

@@ -104,5 +104,9 @@ public class Usuario {
     public void cancelarCompra(){
         System.out.println(getUser()+" solicitou o cancelamento da compra.");
     }
+
+    public double calcularPrecoFinal(double precoBase){
+        return precoBase;
+    }
     
 }

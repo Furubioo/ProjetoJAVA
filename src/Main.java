@@ -57,13 +57,13 @@ public class Main {
         compraCarol.adicionarProduto(Produto.PIPOCA_GRANDE.name(), Produto.PIPOCA_GRANDE.getPreco(), CupomPromocional.DESCONTO10);
         compraCarol.adicionarProduto(Produto.REFRIGERANTE_500ML.name(), Produto.REFRIGERANTE_500ML.getPreco());
 
-        imprimirRecibo(compraCarol, bilheteCarol, cadeirasCarol, "Estudante");
+        imprimirRecibo(compraCarol, bilheteCarol, cadeirasCarol, "Normal");
 
 
         //Usuário estudante
         int [][] cadeirasJoao = new int[10][15];
-        cadeirasJoao[3][5] = 1;
-        s2.getCadeiras()[3][5] = true;
+        cadeirasJoao[3][7] = 1;
+        s2.getCadeiras()[3][7] = true;
 
         double precoIngressoJoao = uEstudante.calcularPrecoFinal(f2.getValor());
         Bilhete bilheteJoao = new Bilhete(uEstudante, 1, s2, f2, precoIngressoJoao, cadeirasJoao);
@@ -73,7 +73,7 @@ public class Main {
         compraJoao.adicionarProduto(Produto.PIPOCA_GRANDE.name(),Produto.PIPOCA_GRANDE.getPreco(),CupomPromocional.DESCONTO10);
         compraJoao.adicionarProduto(Produto.REFRIGERANTE_500ML.name(),Produto.REFRIGERANTE_500ML.getPreco());
 
-        imprimirRecibo(compraJoao, bilheteJoao, cadeirasJoao, "Normal");
+        imprimirRecibo(compraJoao, bilheteJoao, cadeirasJoao, "Estudante");
 
 
         //Usuário crítico

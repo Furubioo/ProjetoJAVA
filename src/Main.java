@@ -7,7 +7,7 @@ public class Main {
         System.out.println("Filme: "+compra.getBilhetes()[0].getFilme().getNome());
         System.out.println("Horário: "+compra.getBilhetes()[0].getSessao().getHorario());
         System.out.println("Assento escolhido: "+bilhete.LocalCadeiras(cadeiras));
-        System.out.println("Valor do ingresso pago: "+compra.getBilhetes()[0].getValor());
+        System.out.println("Valor do ingresso pago: R$ "+compra.getBilhetes()[0].getValor());
 
         System.out.println("\n Produtos adquiridos: ");
         if (compra.getQtdProdutos() == 0) {
@@ -18,6 +18,12 @@ public class Main {
                 System.out.println("- " +compra.getProduto()[i]+" | R$ "+compra.getValorProduto()[i]);
             }
         }
+        double soma = 0;
+        for(int i = 0; i < compra.getQtdProdutos();i++){
+            soma += compra.getValorProduto()[i];
+        }
+        soma += compra.getBilhetes()[0].getValor();
+        System.out.println("\nValor final da compra: R$ "+soma);
         System.out.println("-----------------------------------\n");
 
     }

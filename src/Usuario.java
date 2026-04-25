@@ -94,7 +94,7 @@ public class Usuario {
     }
 
     public void realizarCompra(){
-        System.out.println(getUser()+" iniciou a compra.");
+        System.out.println(getUser()+" Realizou a compra.");
     }
 
     public void alterarCompra(){

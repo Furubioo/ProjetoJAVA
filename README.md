@@ -17,11 +17,17 @@ Como executar:
 3. Executar a classe Main
 
 Estrutura do projeto:
-- Main.java
-- Usuario.java
-- Filme.java
-- Sessao.java
-- Sala.java
 - Bilhete.java
 - Compra.java
+- Critica.java
+- Critico.java
+- CupomPromocional.java
+- Estudante.java
+- Filme.java
+- Main.java
+- Produto.java
+- Sala.java
+- Sessao.java
+- TipoSala.java
+- Usuario.java
 

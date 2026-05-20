@@ -73,7 +73,7 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         }
         System.out.println("Lista de usuários:");
         for (Base u : usuarios) {
-            System.out.println("   → " + u);
+            System.out.println("   -> " + u);
         }
     }
 
@@ -86,7 +86,7 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         }
         System.out.println("Catálogo de filmes:");
         for (Filme f : catalogoFilmes) {
-            System.out.println("   → " + f);
+            System.out.println("   -> " + f);
         }
     }
 

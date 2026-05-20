@@ -30,4 +30,8 @@ Estrutura do projeto:
 - Sessao.java
 - TipoSala.java
 - Usuario.java
+- Base.java
+- Funcionario.java
+- Administrador.java
+- GerenciaDeFilmes.java
 

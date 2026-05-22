@@ -3,30 +3,45 @@ public class Sessao {
     private String horario;
     private boolean[][] cadeiras;
 
-    public Sessao(Filme filme, String horario){
+    public Sessao(Filme filme, String horario) {
         this.filme = filme;
         this.horario = horario;
         this.cadeiras = new boolean[10][15];
     }
 
-    public Filme getFilme(){
+    public Filme getFilme() {
         return filme;
     }
 
-    public String getHorario(){
-        return horario;
-    }
-
-    public boolean[][] getCadeiras(){
-        return cadeiras;
-    }
-
-    public void setFilme(Filme filme){
+    public void setFilme(Filme filme) {
         this.filme = filme;
     }
 
-    public void setHorario(String horario){
+    public String getHorario() {
+        return horario;
+    }
+
+    public void setHorario(String horario) {
         this.horario = horario;
     }
-    
+
+    public boolean[][] getCadeiras() {
+        return cadeiras;
+    }
+
+    public void setCadeiras(boolean[][] cadeiras) {
+        this.cadeiras = cadeiras;
+    }
+
+    public boolean cadeiraDisponivel(int linha, int coluna) {
+        return !cadeiras[linha][coluna];
+    }
+
+    public void ocuparCadeira(int linha, int coluna) {
+        cadeiras[linha][coluna] = true;
+    }
+
+    public String formatarCadeira(int linha, int coluna) {
+        return String.valueOf((char) ('A' + linha)) + (coluna + 1);
+    }
 }

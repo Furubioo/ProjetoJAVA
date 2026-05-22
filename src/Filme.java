@@ -6,9 +6,8 @@ public class Filme {
     private double nota;
     private int quantidade_criticos;
     private Critica critica;
-    private String[] vetorcriticas = new String[100];
-    
-    
+    private Critica[] vetorcriticas = new Critica[100];
+
     public Filme(String nome, int duracao, String sinopse, double valor) {
         this.nome = nome;
         this.duracao = duracao;
@@ -16,64 +15,52 @@ public class Filme {
         this.valor = valor;
         this.nota = 0;
         this.quantidade_criticos = 0;
-        this.critica =  new Critica(nome, "sistema", "Mural inicial");
+        this.critica = new Critica(nome, "sistema", "Mural inicial");
     }
-
 
     public String getNome() {
         return nome;
     }
 
-
     public void setNome(String nome) {
         this.nome = nome;
     }
-
 
     public int getDuracao() {
         return duracao;
     }
 
-
     public void setDuracao(int duracao) {
         this.duracao = duracao;
     }
-
 
     public String getSinopse() {
         return sinopse;
     }
 
-
     public void setSinopse(String sinopse) {
         this.sinopse = sinopse;
     }
-
 
     public double getValor() {
         return valor;
     }
 
-
     public void setValor(double valor) {
         this.valor = valor;
     }
-
 
     public double getNota() {
         return nota;
     }
 
-
     public void setNota(double nota) {
         this.nota = nota;
     }
 
-
     public int getQuantidade_criticos() {
         return quantidade_criticos;
     }
-
 
     public void setQuantidade_criticos(int quantidade_criticos) {
         this.quantidade_criticos = quantidade_criticos;
@@ -87,13 +74,11 @@ public class Filme {
         this.critica = critica;
     }
 
-    public String[] getVetorcriticas(){
+    public Critica[] getVetorcriticas() {
         return vetorcriticas;
     }
 
-    public void setVetorcriticas(String[] vetorcriticas){
+    public void setVetorcriticas(Critica[] vetorcriticas) {
         this.vetorcriticas = vetorcriticas;
     }
-
-
-} 
+}

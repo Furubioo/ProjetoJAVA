@@ -2,11 +2,13 @@ public class Sessao {
     private Filme filme;
     private String horario;
     private boolean[][] cadeiras;
+    private boolean emCartaz;
 
     public Sessao(Filme filme, String horario) {
-        this.filme = filme;
-        this.horario = horario;
+        this.filme    = filme;
+        this.horario  = horario;
         this.cadeiras = new boolean[10][15];
+        this.emCartaz = true; 
     }
 
     public Filme getFilme() {
@@ -33,6 +35,14 @@ public class Sessao {
         this.cadeiras = cadeiras;
     }
 
+    public boolean isEmCartaz() {
+        return emCartaz;
+    }
+
+    public void setEmCartaz(boolean emCartaz) {
+        this.emCartaz = emCartaz;
+    }
+
     public boolean cadeiraDisponivel(int linha, int coluna) {
         return !cadeiras[linha][coluna];
     }
@@ -43,5 +53,12 @@ public class Sessao {
 
     public String formatarCadeira(int linha, int coluna) {
         return String.valueOf((char) ('A' + linha)) + (coluna + 1);
+    }
+
+    @Override
+    public String toString() {
+        return "Sessão[" + (filme != null ? filme.getNome() : "sem filme") +
+               " | " + horario +
+               " | " + (emCartaz ? "em cartaz" : "encerrada") + "]";
     }
 }

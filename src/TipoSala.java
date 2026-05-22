@@ -1,16 +1,27 @@
 public enum TipoSala {
-    NORMAL(1.0),
-    XD(1.3),
-    XD_3D(1.4),
-    SALA_3D(1.2);
+    COMUM("Comum", 1.0),
+    SALA_3D("3D", 1.2),
+    XD("XD", 1.3),
+    XD_3D("XD/3D", 1.4);
 
-    private double multiplicador;
+    private final String tipo;
+    private final double multiplicador;
 
-    TipoSala(double multiplicador){
+    TipoSala(String tipo, double multiplicador) {
+        this.tipo = tipo;
         this.multiplicador = multiplicador;
     }
 
-    public double getMultiplicador(){
+    public String getTipo() {
+        return tipo;
+    }
+
+    public double getMultiplicador() {
         return multiplicador;
+    }
+
+    @Override
+    public String toString() {
+        return tipo;
     }
 }

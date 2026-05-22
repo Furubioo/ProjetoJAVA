@@ -1,5 +1,6 @@
 public class Bilhete {
     private Usuario user;
+    private String cpf;     
     private Sala sala;
     private Sessao sessao;
     private Filme filme;
@@ -7,11 +8,12 @@ public class Bilhete {
     private String cadeira;
 
     public Bilhete(Usuario user, Sala sala, Sessao sessao, Filme filme, double valor, String cadeira) {
-        this.user = user;
-        this.sala = sala;
-        this.sessao = sessao;
-        this.filme = filme;
-        this.valor = valor;
+        this.user    = user;
+        this.cpf     = user.getCpf();  
+        this.sala    = sala;
+        this.sessao  = sessao;
+        this.filme   = filme;
+        this.valor   = valor;
         this.cadeira = cadeira;
     }
 
@@ -21,6 +23,15 @@ public class Bilhete {
 
     public void setUser(Usuario user) {
         this.user = user;
+        this.cpf  = user.getCpf();
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public Sala getSala() {
@@ -65,7 +76,11 @@ public class Bilhete {
 
     @Override
     public String toString() {
-        return "Bilhete[" + filme.getNome() + " | Sessão: " + sessao.getHorario() +
-               " | Cadeira: " + cadeira + " | Valor: R$ " + String.format("%.2f", valor) + "]";
+        return "Bilhete[" + filme.getNome() +
+               " | Sala: " + sala.getTipo().getTipo() +
+               " | Sessão: " + sessao.getHorario() +
+               " | Cadeira: " + cadeira +
+               " | CPF: " + cpf +
+               " | Valor: R$ " + String.format("%.2f", valor) + "]";
     }
 }

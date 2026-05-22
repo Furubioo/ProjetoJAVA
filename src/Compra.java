@@ -1,104 +1,96 @@
 public class Compra {
-    private String[] produto;
+    private Produto[] produtos;
     private int qtdProdutos;
-    private double[] valorProduto;
     private Bilhete[] bilhetes;
     private int qtdBilhetes;
 
     public Compra() {
-        this.produto = new String[15];
+        this.produtos = new Produto[15];
         this.qtdProdutos = 0;
-        this.valorProduto = new double[15];
         this.bilhetes = new Bilhete[15];
         this.qtdBilhetes = 0;
     }
 
-    public String[] getProduto() {
-        return produto;
+    public Produto[] getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(Produto[] produtos) {
+        this.produtos = produtos;
     }
 
     public int getQtdProdutos() {
         return qtdProdutos;
     }
 
-    public double[] getValorProduto(){
-        return valorProduto;
+    public void setQtdProdutos(int qtdProdutos) {
+        this.qtdProdutos = qtdProdutos;
     }
 
     public Bilhete[] getBilhetes() {
         return bilhetes;
     }
 
-    public int getQtdbilhetes() {
-        return qtdBilhetes;
-    }
-
-    public void setProduto(String[] produto) {
-        this.produto = produto;
-    }
-
-    public void setQtdProdutos(int qtdprodutos) {
-        this.qtdProdutos = qtdprodutos;
-    }
-
-    public void setValorProduto(double[] valorProduto){
-        this.valorProduto = valorProduto;
-    }
-
     public void setBilhetes(Bilhete[] bilhetes) {
         this.bilhetes = bilhetes;
     }
 
-    public void setQtdbilhetes(int qtdbilhetes) {
-        this.qtdBilhetes = qtdbilhetes;
+    public int getQtdBilhetes() {
+        return qtdBilhetes;
+    }
+
+    public void setQtdBilhetes(int qtdBilhetes) {
+        this.qtdBilhetes = qtdBilhetes;
+    }
+
+    public void adicionarProduto(Produto produto) {
+        if (qtdProdutos < 15) {
+            this.produtos[qtdProdutos] = produto;
+            this.qtdProdutos++;
+        } else {
+            System.out.println("Não é mais possível comprar produtos.");
+        }
+    }
+
+    public void adicionarProduto(Produto produto, CupomPromocional cupom) {
+        if (qtdProdutos < 15) {
+            this.produtos[qtdProdutos] = produto;
+            this.qtdProdutos++;
+            System.out.println("Produto adicionado com desconto de " +
+                    (int)(cupom.getDesconto() * 100) + "%: " + produto.getNome() +
+                    " | Valor final: R$ " + String.format("%.2f", produto.getPreco() * (1 - cupom.getDesconto())));
+        } else {
+            System.out.println("Não é mais possível comprar produtos.");
+        }
     }
 
     public void comprarBilhetes(Bilhete novoBilhete) {
-
         if (qtdBilhetes < 15) {
             this.bilhetes[qtdBilhetes] = novoBilhete;
             this.qtdBilhetes++;
-        }
-        else {
-            System.out.println("Não é mais possível comprar bilhetes");
-        }
-
-    }
-
-    public void adicionarProduto(String produto, double valor) {
-        if (qtdProdutos < 15) {
-            this.produto[qtdProdutos] = produto;
-            this.valorProduto[qtdProdutos] = valor;
-            this.qtdProdutos++;
-        }
-        else{
-            System.out.println("Não é mais possivel comprar produtos.");
+        } else {
+            System.out.println("Não é mais possível comprar bilhetes.");
         }
     }
 
-    public void comprarBilhetes(Bilhete novoBilhete,CupomPromocional cupom){
-        
+    public void comprarBilhetes(Bilhete novoBilhete, CupomPromocional cupom) {
         if (qtdBilhetes < 15) {
-            novoBilhete.setValor(novoBilhete.getValor() - novoBilhete.getValor() * cupom.getDesconto());
+            novoBilhete.setValor(novoBilhete.getValor() * (1 - cupom.getDesconto()));
             this.bilhetes[qtdBilhetes] = novoBilhete;
             this.qtdBilhetes++;
-        }
-        else {
-            System.out.println("Não é mais possível comprar bilhetes");
+        } else {
+            System.out.println("Não é mais possível comprar bilhetes.");
         }
     }
 
-    public void adicionarProduto(String produto,double valor,CupomPromocional cupom){
-        if (qtdProdutos < 15) {
-            this.produto[qtdProdutos] = produto;
-            valor = valor - (valor * cupom.getDesconto());
-            this.valorProduto[qtdProdutos] = valor;
-            this.qtdProdutos++;
+    public double calcularTotal() {
+        double total = 0;
+        for (int i = 0; i < qtdBilhetes; i++) {
+            total += bilhetes[i].getValor();
         }
-        else {
-            System.out.println("Não é mais possivel comprar produtos.");
+        for (int i = 0; i < qtdProdutos; i++) {
+            total += produtos[i].getPreco();
         }
+        return total;
     }
 }
-
-

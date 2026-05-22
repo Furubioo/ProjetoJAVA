@@ -1,84 +1,71 @@
 public class Bilhete {
     private Usuario user;
-    private int sala;
+    private Sala sala;
     private Sessao sessao;
     private Filme filme;
     private double valor;
-    private int[][] cadeiras = new int[10][15];  
+    private String cadeira;
 
-    public Bilhete(Usuario user, int sala, Sessao sessao, Filme filme, double valor, int[][] cadeiras) {
+    public Bilhete(Usuario user, Sala sala, Sessao sessao, Filme filme, double valor, String cadeira) {
         this.user = user;
         this.sala = sala;
         this.sessao = sessao;
         this.filme = filme;
         this.valor = valor;
-        this.cadeiras = cadeiras;
-
+        this.cadeira = cadeira;
     }
 
     public Usuario getUser() {
         return user;
     }
 
-    public int getSala() {
+    public void setUser(Usuario user) {
+        this.user = user;
+    }
+
+    public Sala getSala() {
         return sala;
+    }
+
+    public void setSala(Sala sala) {
+        this.sala = sala;
     }
 
     public Sessao getSessao() {
         return sessao;
     }
 
-    public Filme getFilme() {
-        return filme;
-    }
-
-    public double getValor() {
-        return valor;
-    }
-
-    public int[][] getCadeiras() {
-        return cadeiras;
-    }
-
-    public void setUser(Usuario user) {
-        this.user = user;
-    }
-
-    public void setSala(int sala) {
-        this.sala = sala;
-    }
-
     public void setSessao(Sessao sessao) {
         this.sessao = sessao;
+    }
+
+    public Filme getFilme() {
+        return filme;
     }
 
     public void setFilme(Filme filme) {
         this.filme = filme;
     }
 
+    public double getValor() {
+        return valor;
+    }
+
     public void setValor(double valor) {
         this.valor = valor;
     }
 
-    public void setCadeiras(int[][] cadeiras) {
-        this.cadeiras = cadeiras;
+    public String getCadeira() {
+        return cadeira;
     }
 
-    public String LocalCadeiras(int[][] cadeiras) {
-
-        String c = "";
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 15; j++) {
-                if (cadeiras[i][j] == 1) {
-                    char a = (char) ('A' + i);
-                    c = a + "" + j;
-                }
-            }
-        }
-
-        return c; 
+    public void setCadeira(String cadeira) {
+        this.cadeira = cadeira;
     }
 
-
+    @Override
+    public String toString() {
+        return "Bilhete[" + filme.getNome() + " | Sessão: " + sessao.getHorario() +
+               " | Cadeira: " + cadeira + " | Valor: R$ " + String.format("%.2f", valor) + "]";
+    }
 }

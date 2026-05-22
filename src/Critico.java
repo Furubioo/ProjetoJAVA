@@ -14,7 +14,7 @@ public class Critico extends Usuario{
         this.origem = origem;
     }
 
-    @Override // Para evitar a criação de um método novo em vez de sobrescrever o antigo
+    @Override 
     public double calcularPrecoFinal(double precoBase){
         precoBase = 0;
         return precoBase;

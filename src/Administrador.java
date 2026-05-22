@@ -5,8 +5,6 @@ public class Administrador extends Base implements GerenciaDeFilmes {
 
     private double salario;
     private String id;
-
-    
     private List<Base> usuarios;
     private List<Filme> catalogoFilmes;
 
@@ -18,22 +16,21 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         this.catalogoFilmes = new ArrayList<>();
     }
 
-    
-    public double getSalario() { 
-        return salario; 
+    public double getSalario() {
+        return salario;
     }
+
     public void setSalario(double salario) {
-        this.salario = salario; 
+        this.salario = salario;
     }
 
-    public String getId() { 
-        return id; 
+    public String getId() {
+        return id;
     }
+
     public void setId(String id) {
-        this.id = id; 
+        this.id = id;
     }
-
-    
 
     @Override
     public void adicionarUsuario() {
@@ -48,8 +45,6 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         System.out.println("Dados do administrador atualizados: " + toString());
     }
 
-    
-
     public void excluirUsuario(String emailUsuario) {
         boolean removido = usuarios.removeIf(u -> u.getEmail().equalsIgnoreCase(emailUsuario));
         if (removido) {
@@ -58,8 +53,6 @@ public class Administrador extends Base implements GerenciaDeFilmes {
             System.out.println("Usuário não encontrado: " + emailUsuario);
         }
     }
-
-    
 
     public void salvarUsuario(Base usuario) {
         usuarios.add(usuario);
@@ -77,8 +70,6 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         }
     }
 
- 
-
     public void listarFilmes() {
         if (catalogoFilmes.isEmpty()) {
             System.out.println("Nenhum filme cadastrado.");
@@ -90,34 +81,32 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         }
     }
 
- 
-
     @Override
     public void incluirFilme(Filme filme) {
         catalogoFilmes.add(filme);
-        System.out.println("Filme incluído: " + filme.getTitulo());
+        System.out.println("Filme incluído: " + filme.getNome());
     }
 
     @Override
-    public void excluirFilme(String tituloFilme) {
-        boolean removido = catalogoFilmes.removeIf(f -> f.getTitulo().equalsIgnoreCase(tituloFilme));
+    public void excluirFilme(String nomeFilme) {
+        boolean removido = catalogoFilmes.removeIf(f -> f.getNome().equalsIgnoreCase(nomeFilme));
         if (removido) {
-            System.out.println("Filme removido: " + tituloFilme);
+            System.out.println("Filme removido: " + nomeFilme);
         } else {
-            System.out.println("Filme não encontrado: " + tituloFilme);
+            System.out.println("Filme não encontrado: " + nomeFilme);
         }
     }
 
     @Override
-    public void alterarFilme(String tituloFilme, Filme novosDados) {
+    public void alterarFilme(String nomeFilme, Filme novosDados) {
         for (int i = 0; i < catalogoFilmes.size(); i++) {
-            if (catalogoFilmes.get(i).getTitulo().equalsIgnoreCase(tituloFilme)) {
+            if (catalogoFilmes.get(i).getNome().equalsIgnoreCase(nomeFilme)) {
                 catalogoFilmes.set(i, novosDados);
-                System.out.println("Filme alterado: " + tituloFilme + " → " + novosDados.getTitulo());
+                System.out.println("Filme alterado: " + nomeFilme + " → " + novosDados.getNome());
                 return;
             }
         }
-        System.out.println("Filme não encontrado para alterar: " + tituloFilme);
+        System.out.println("Filme não encontrado para alterar: " + nomeFilme);
     }
 
     @Override

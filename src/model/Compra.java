@@ -66,7 +66,7 @@ public class Compra {
 
     private void adicionarProdutoComValor(Produto produto, double precoFinal) {
         if (qtdProdutos >= produtos.length) {
-            System.out.println("Nao e mais possivel adicionar produtos.");
+            System.out.println("Não e mais possivel adicionar produtos.");
             return;
         }
 

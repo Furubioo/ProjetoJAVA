@@ -36,9 +36,9 @@ public abstract class Base {
         this.email = email; 
     }
 
-    public abstract void adicionarUsuario();
+    public abstract void adicionarUsuario(Base usuario);
     public abstract void alterarUsuario(String novoNome, int novaIdade, String novoEmail);
-
+    
     @Override
     public String toString() {
         return "Nome: " + nome + " | Idade: " + idade + " | Email: " + email;

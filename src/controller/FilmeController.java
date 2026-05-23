@@ -15,7 +15,7 @@ public class FilmeController {
     }
 
     public void carregarFilmes() {
-        int[] qtdLida = new int[1];
+        int[] qtdLida  = new int[1];
         this.filmes    = PersistenciaArquivo.carregarFilmes(qtdLida);
         this.qtdFilmes = qtdLida[0];
     }
@@ -28,7 +28,8 @@ public class FilmeController {
         if (qtdFilmes < MAX) {
             filmes[qtdFilmes++] = filme;
             salvarFilmes();
-        } else {
+        } 
+        else {
             System.out.println("Catálogo cheio.");
         }
     }
@@ -36,12 +37,13 @@ public class FilmeController {
     public void excluirFilme(String nome) {
         for (int i = 0; i < qtdFilmes; i++) {
             if (filmes[i].getNome().equalsIgnoreCase(nome)) {
-                for (int j = i; j < qtdFilmes - 1; j++) 
+                for (int j = i; j < qtdFilmes - 1; j++) {
                     filmes[j] = filmes[j + 1];
-                    filmes[--qtdFilmes] = null;
-                    salvarFilmes();
-                    System.out.println("Filme removido: " + nome);
-                    return;
+                }
+                filmes[--qtdFilmes] = null;
+                salvarFilmes();
+                System.out.println("Filme removido: " + nome);
+                return;
             }
         }
         System.out.println("Filme não encontrado: " + nome);
@@ -62,14 +64,13 @@ public class FilmeController {
     public Filme[] getFilmes() { 
         return filmes; 
     }
-    
     public int getQtdFilmes() { 
         return qtdFilmes; 
     }
 
     public Filme buscarFilme(String nome) {
         for (int i = 0; i < qtdFilmes; i++)
-            if (filmes[i].getNome().equalsIgnoreCase(nome)) 
+            if (filmes[i].getNome().equalsIgnoreCase(nome))
                 return filmes[i];
         return null;
     }

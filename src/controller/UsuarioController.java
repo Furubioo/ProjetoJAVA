@@ -1,5 +1,6 @@
 package controller;
 
+import model.Administrador;
 import model.PersistenciaArquivo;
 import model.Usuario;
 
@@ -21,7 +22,8 @@ public class UsuarioController {
     }
 
     public void salvarUsuarios() {
-        PersistenciaArquivo.salvarUsuarios(usuarios, qtdUsuarios);
+        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
+        admin.persistirUsuarios(usuarios, qtdUsuarios);
     }
 
     public void adicionarUsuario(Usuario usuario) {

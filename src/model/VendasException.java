@@ -15,7 +15,9 @@ public class VendasException extends Exception {
         this.tipoErro = tipoErro;
     }
 
-    public TipoErro getTipoErro() { return tipoErro; }
+    public TipoErro getTipoErro() { 
+        return tipoErro; 
+    }
 
     private static String getMensagem(TipoErro tipo) {
         switch (tipo) {

@@ -13,4 +13,11 @@ public class Estudante extends Usuario {
     public String toString() {
         return super.toString() + " [Estudante]";
     }
+
+    @Override
+    public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
+        double valorBase  = sala.calcularValorBilhete(sessao.getFilme().getValor());
+        double valorFinal = valorBase / 2.0;
+        return criarBilhete(sala, sessao, linha, coluna, valorFinal);
+    }
 }

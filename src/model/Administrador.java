@@ -12,9 +12,9 @@ public class Administrador extends Base implements GerenciaDeFilmes {
 
     public Administrador(String nome, int idade, String email, double salario, String id) {
         super(nome, idade, email);
-        this.salario     = salario;
-        this.id          = id;
-        this.usuarios    = new Base[MAX];
+        this.salario = salario;
+        this.id = id;
+        this.usuarios = new Base[MAX];
         this.qtdUsuarios = 0;
     }
 

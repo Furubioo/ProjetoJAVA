@@ -36,11 +36,13 @@ public class UsuarioController {
     public void excluirUsuario(String email) {
         for (int i = 0; i < qtdUsuarios; i++) {
             if (usuarios[i].getEmail().equalsIgnoreCase(email)) {
-                for (int j = i; j < qtdUsuarios - 1; j++) usuarios[j] = usuarios[j + 1];
-                    usuarios[--qtdUsuarios] = null;
-                    salvarUsuarios();
-                    System.out.println("Usuário removido: " + email);
-                    return;
+                for (int j = i; j < qtdUsuarios - 1; j++) {
+                    usuarios[j] = usuarios[j + 1];
+                }
+                usuarios[--qtdUsuarios] = null;
+                salvarUsuarios();
+                System.out.println("Usuário removido: " + email);
+                return;
             }
         }
         System.out.println("Usuário não encontrado: " + email);
@@ -56,9 +58,7 @@ public class UsuarioController {
     public Usuario[] getUsuarios() { 
         return usuarios; 
     }
-    
-    public int getQtdUsuarios() {
+    public int getQtdUsuarios() { 
         return qtdUsuarios; 
     }
-
 }

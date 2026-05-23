@@ -1,5 +1,6 @@
 package controller;
 
+import model.Administrador;
 import model.Filme;
 import model.PersistenciaArquivo;
 
@@ -21,7 +22,8 @@ public class FilmeController {
     }
 
     public void salvarFilmes() {
-        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes);
+        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
+        admin.persistirFilmes(filmes, qtdFilmes);
     }
 
     public void incluirFilme(Filme filme) {

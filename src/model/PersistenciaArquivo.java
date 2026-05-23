@@ -7,7 +7,7 @@ import model.Estudante;
 public class PersistenciaArquivo {
 
     private static final String ARQUIVO_USUARIOS = "usuarios.txt";
-    private static final String ARQUIVO_FILMES   = "filmes.txt";
+    private static final String ARQUIVO_FILMES = "filmes.txt";
     private static final int MAX = 100;
 
     public static void salvarFilmes(Filme[] filmes, int qtd) {
@@ -48,7 +48,6 @@ public class PersistenciaArquivo {
         try (PrintWriter escritor = new PrintWriter(new FileWriter(ARQUIVO_USUARIOS))) {
             for (int i = 0; i < qtd; i++) {
                 Usuario u = usuarios[i];
-
                 String tipo;
                 if (u instanceof Critico) {
                     tipo = "CRITICO:" + ((Critico) u).getOrigem();

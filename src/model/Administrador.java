@@ -1,4 +1,6 @@
 package model;
+import model.PersistenciaArquivo;
+import model.Usuario;
 
 public class Administrador extends Base implements GerenciaDeFilmes {
 
@@ -91,6 +93,16 @@ public class Administrador extends Base implements GerenciaDeFilmes {
     @Override
     public void alterarFilme(String nomeFilme, Filme novosDados) {
         System.out.println("[Admin] Autorizado alteração do filme: " + nomeFilme + " -> " + novosDados.getNome());
+    }
+
+    public void persistirUsuarios(Usuario[] usuarios, int qtd) {
+        PersistenciaArquivo.salvarUsuarios(usuarios, qtd);
+        System.out.println("[Administrador] Persistência de usuários realizada.");
+    }
+
+    public void persistirFilmes(Filme[] filmes, int qtd) {
+        PersistenciaArquivo.salvarFilmes(filmes, qtd);
+        System.out.println("[Administrador] Persistência de filmes realizada.");
     }
 
     @Override

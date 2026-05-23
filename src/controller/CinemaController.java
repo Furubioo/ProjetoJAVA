@@ -1,5 +1,6 @@
 package controller;
 
+import model.Administrador;
 import model.Bilhete;
 import model.CupomPromocional;
 import model.Sala;

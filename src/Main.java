@@ -5,9 +5,9 @@ import view.CinemaView;
 
 public class Main {
     public static void main(String[] args) {
-        FilmeController filmeController     = new FilmeController();
+        FilmeController filmeController = new FilmeController();
         UsuarioController usuarioController = new UsuarioController();
-        CinemaController cinemaController   = new CinemaController();
+        CinemaController cinemaController = new CinemaController();
 
         filmeController.carregarFilmes();
         usuarioController.carregarUsuarios();

@@ -133,8 +133,7 @@ public class CinemaView {
             System.out.println("3. Gerenciar filmes (Funcionário/Admin)");
             System.out.println("0. Sair");
             opcao = lerInt();
-            switch (opcao) 
-            {
+            switch (opcao) {
                 case 1: 
                     exibirFilmes();        
                     break;
@@ -200,8 +199,7 @@ public class CinemaView {
                 System.out.printf("%d. %s | %s | R$ %.2f%s%n", i + 1,
                 sessoes[i].getHorario(),
                 sessoes[i].getFilme().getNome(),
-                sala.calcularValorBilhete(sessoes[i].getFilme().getValor()),
-                status);
+                sala.calcularValorBilhete(sessoes[i].getFilme().getValor()), status);
             }
         }
 

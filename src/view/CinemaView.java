@@ -5,8 +5,11 @@ import controller.FilmeController;
 import controller.UsuarioController;
 import model.Bilhete;
 import model.Compra;
+import model.Critico;
 import model.CupomPromocional;
+import model.Estudante;
 import model.Filme;
+import model.Produto;
 import model.Sala;
 import model.Sessao;
 import model.TipoSala;
@@ -23,8 +26,8 @@ public class CinemaView {
     private final UsuarioController usuarioController;
 
     public CinemaView(CinemaController cinemaController, FilmeController filmeController, UsuarioController usuarioController) {
-        this.cinemaController  = cinemaController;
-        this.filmeController   = filmeController;
+        this.cinemaController = cinemaController;
+        this.filmeController = filmeController;
         this.usuarioController = usuarioController;
     }
 
@@ -34,24 +37,29 @@ public class CinemaView {
     }
 
     private void menuLogin() {
-        int opcao;
-        do {
-            System.out.println("\n--- Login ---");
-            System.out.println("1. Entrar");
-            System.out.println("0. Sair");
-            opcao = lerInt();
-            switch (opcao) {
-                case 1: 
-                    fazerLogin(); 
-                    break;
-                case 0: 
-                    System.out.println("Encerrando..."); 
-                    break;
-                default: 
-                    System.out.println("Opção inválida.");
-            }
-        } while (opcao != 0);
-    }
+    int opcao;
+    do {
+        System.out.println("\n--- Login ---");
+        System.out.println("1. Entrar");
+        System.out.println("2. Cadastrar");
+        System.out.println("0. Sair");
+        opcao = lerInt();
+        switch (opcao) {
+            case 1: 
+                fazerLogin(); 
+                break;
+            case 2: 
+                cadastrarUsuario(); 
+                break;
+            case 0: 
+                System.out.println("Encerrando..."); 
+                break;
+            default: 
+                System.out.println("Opção inválida.");
+        }
+    } 
+    while (opcao != 0);
+}
 
     private void fazerLogin() {
         System.out.print("Usuário: ");
@@ -69,6 +77,53 @@ public class CinemaView {
         menuPrincipal();
     }
 
+    private void cadastrarUsuario() {
+        System.out.println("\n--- Cadastro de Usuário ---");
+        System.out.print("Usuário (login): ");
+        String user = scanner.nextLine();
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
+        System.out.print("Idade: ");
+        int idade = lerInt();
+        System.out.print("Sexo (M/F): ");
+        char sexo = scanner.nextLine().toUpperCase().charAt(0);
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Nome no cartão: ");
+        String nomeCartao = scanner.nextLine();
+        System.out.print("Número do cartão: ");
+        String numeroCartao = scanner.nextLine();
+        System.out.print("Código verificador: ");
+        String codigoCartao = scanner.nextLine();
+
+        System.out.println("Tipo de conta:");
+        System.out.println("1. Usuário comum");
+        System.out.println("2. Estudante");
+        System.out.println("3. Crítico");
+        int tipo = lerInt();
+
+        Usuario novoUsuario;
+
+        switch (tipo) {
+        case 2:
+            novoUsuario = new Estudante(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
+            break;
+        case 3:
+            System.out.print("Origem (veículo de crítica): ");
+            String origem = scanner.nextLine();
+            novoUsuario = new Critico(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, origem);
+            break;
+        default:
+            novoUsuario = new Usuario(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
+            break;
+        }
+
+        usuarioController.adicionarUsuario(novoUsuario);
+        System.out.println("Usuário cadastrado com sucesso!");
+    }
+
     private void menuPrincipal() {
         int opcao;
         do {
@@ -78,7 +133,8 @@ public class CinemaView {
             System.out.println("3. Gerenciar filmes (Funcionário/Admin)");
             System.out.println("0. Sair");
             opcao = lerInt();
-            switch (opcao) {
+            switch (opcao) 
+            {
                 case 1: 
                     exibirFilmes();        
                     break;
@@ -94,7 +150,8 @@ public class CinemaView {
                 default: 
                     System.out.println("Opção inválida.");
             }
-        } while (opcao != 0);
+        } 
+        while (opcao != 0);
     }
 
     private void exibirFilmes() {
@@ -114,29 +171,57 @@ public class CinemaView {
 
     private void fluxoCompra() {
         Sala sala = escolherSala();
-        if (sala == null) return;
+        if (sala == null) 
+            return;
 
-        exibirFilmes();
-        System.out.print("Escolha o número do filme: ");
-        int idx = lerInt() - 1;
         Filme[] filmes = filmeController.getFilmes();
-        if (idx < 0 || idx >= filmeController.getQtdFilmes()) {
-            System.out.println("Filme inválido.");
+        int qtdFilmes   = filmeController.getQtdFilmes();
+
+        if (qtdFilmes == 0) {
+            System.out.println("Nenhum filme em cartaz.");
             return;
         }
 
-        Sessao sessao = new Sessao(filmes[idx], "19:00");
-        sala.adicionarSessao(sessao, 0);
+        String[] horarios = {
+            "08:00", "10:00", "12:00", "14:00",
+            "16:00", "18:00", "20:00", "22:00"
+        };
+
+        for (int i = 0; i < horarios.length; i++) {
+            Filme filmeDoHorario = filmes[i % qtdFilmes];
+            sala.adicionarSessao(new Sessao(filmeDoHorario, horarios[i]), i);
+        }
+
+        System.out.println("\n--- Sessões disponíveis ---");
+        Sessao[] sessoes = sala.getListaSessoes();
+        for (int i = 0; i < sessoes.length; i++) {
+            if (sessoes[i] != null) {
+                String status = sessoes[i].horarioJaPassou() ? " [ENCERRADA]" : " [DISPONÍVEL]";
+                System.out.printf("%d. %s | %s | R$ %.2f%s%n", i + 1,
+                sessoes[i].getHorario(),
+                sessoes[i].getFilme().getNome(),
+                sala.calcularValorBilhete(sessoes[i].getFilme().getValor()),
+                status);
+            }
+        }
+
+        System.out.print("Escolha a sessão: ");
+        int idxSessao = lerInt() - 1;
+        if (idxSessao < 0 || idxSessao >= sessoes.length || sessoes[idxSessao] == null) {
+            System.out.println("Sessão inválida.");
+            return;
+        }
+
+        Sessao sessao = sessoes[idxSessao];
 
         System.out.print("Quantos bilhetes? ");
         int qtd = lerInt();
         if (qtd <= 0) {
             System.out.println("Quantidade inválida.");
-            return; 
+            return;
         }
 
         CupomPromocional cupom = escolherCupom();
-
         Compra compra = new Compra();
 
         try {
@@ -148,10 +233,9 @@ public class CinemaView {
                 int coluna = lerInt() - 1;
 
                 Bilhete bilhete = cinemaController.comprarBilhete(sessao, sala, fileira - 'A', coluna, cupom);
-                compra.comprarBilhetes(bilhete, cupom);
+                compra.comprarBilhetes(bilhete);
                 System.out.println("\nV Compra realizada!");
                 System.out.println(bilhete);
-
             } 
             else {
                 System.out.println("\nBuscando " + qtd + " cadeiras consecutivas...");
@@ -162,17 +246,44 @@ public class CinemaView {
                     System.out.println("Sem cadeiras consecutivas suficientes.");
                     return;
                 }
-                for (Bilhete b : bilhetes)
-                    compra.comprarBilhetes(b, cupom);
-                    System.out.println("\nV " + qtd + " bilhetes comprados!");
-                for (Bilhete b : bilhetes) 
+                System.out.println("\nV " + qtd + " bilhetes comprados!");
+                for (Bilhete b : bilhetes) {
+                    compra.comprarBilhetes(b);
                     System.out.println("  " + b);
+                }
             }
 
+            adicionarProdutosAoCarrinho(compra, cupom);
             System.out.printf("Total: R$ %.2f%n", compra.calcularTotal());
 
         } catch (VendasException e) {
             System.out.println("\nX " + e.getMessage());
+        }
+    }
+
+    private void adicionarProdutosAoCarrinho(Compra compra, CupomPromocional cupom) {
+        System.out.print("\nDeseja adicionar produtos de balcão? (S/N): ");
+        if (!scanner.nextLine().equalsIgnoreCase("S")) 
+            return;
+
+        boolean continuar = true;
+        while (continuar) {
+            System.out.println("\n--- Produtos disponíveis ---");
+            Produto[] produtos = Produto.values();
+            for (int i = 0; i < produtos.length; i++) {
+                System.out.printf("%d. %s - R$ %.2f%n", i + 1, produtos[i].getNome(), produtos[i].getPreco());
+            }
+            System.out.println("0. Finalizar");
+            System.out.print("Escolha: ");
+            int op = lerInt() - 1;
+
+            if (op < 0 || op >= produtos.length) {
+                continuar = false;
+            } 
+            else {
+                compra.adicionarProduto(produtos[op], cupom);
+                System.out.println("Produto adicionado!");
+            }
         }
     }
 
@@ -187,7 +298,7 @@ public class CinemaView {
             System.out.println("Opção inválida."); 
             return null; 
         }
-        return new Sala(8, tipos[op]);
+        return new Sala(tipos[op]);
     }
 
     private void exibirMapa(Sessao sessao) {
@@ -245,7 +356,8 @@ public class CinemaView {
                 default: 
                     System.out.println("Opção inválida.");
             }
-        } while (opcao != 0);
+        } 
+        while (opcao != 0);
     }
 
     private void incluirFilme() {
@@ -283,7 +395,8 @@ public class CinemaView {
     private int lerInt() {
         try {
             return Integer.parseInt(scanner.nextLine().trim()); 
-        } catch (NumberFormatException e) { 
+        } 
+        catch (NumberFormatException e) { 
             System.out.println("Entrada inválida, usando 0."); 
             return 0; 
         }
@@ -292,7 +405,8 @@ public class CinemaView {
     private double lerDouble() {
         try {
             return Double.parseDouble(scanner.nextLine().trim().replace(",", ".")); 
-        } catch (NumberFormatException e) { 
+        } 
+        catch (NumberFormatException e) { 
             System.out.println("Entrada inválida, usando 0.0."); 
             return 0.0; 
         }

@@ -14,7 +14,7 @@ public class Sala {
 
     public Sala(TipoSala tipo) {
         this.listaSessoes = new Sessao[TOTAL_SESSOES];
-        this.tipo         = tipo;
+        this.tipo = tipo;
     }
 
     public Sessao[] getListaSessoes() {

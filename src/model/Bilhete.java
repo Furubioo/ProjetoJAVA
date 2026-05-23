@@ -10,12 +10,12 @@ public class Bilhete {
     private String cadeira;
 
     public Bilhete(Usuario user, Sala sala, Sessao sessao, Filme filme, double valor, String cadeira) {
-        this.user    = user;
-        this.cpf     = user.getCpf();
-        this.sala    = sala;
-        this.sessao  = sessao;
-        this.filme   = filme;
-        this.valor   = valor;
+        this.user = user;
+        this.cpf = user.getCpf();
+        this.sala = sala;
+        this.sessao = sessao;
+        this.filme = filme;
+        this.valor = valor;
         this.cadeira = cadeira;
     }
 

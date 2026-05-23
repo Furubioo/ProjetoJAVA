@@ -42,9 +42,15 @@ public class Critico extends Usuario {
 
         System.out.println("Limite de criticas atingido para este filme.");
     }
+    @Override
+    public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
+        return criarBilhete(sala, sessao, linha, coluna, 0.0);
+    }
 
     @Override
     public String toString() {
         return super.toString() + " [Critico | Origem: " + origem + "]";
     }
+
+
 }

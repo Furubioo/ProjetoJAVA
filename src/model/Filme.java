@@ -7,7 +7,6 @@ public class Filme {
     private double valor;
     private double nota;
     private int quantidade_criticos;
-    private Critica critica;
     private Critica[] vetorcriticas = new Critica[100];
 
     public Filme(String nome, int duracao, String sinopse, double valor) {
@@ -17,7 +16,6 @@ public class Filme {
         this.valor = valor;
         this.nota = 0;
         this.quantidade_criticos = 0;
-        this.critica = new Critica(nome, "sistema", "Mural inicial");
     }
 
     public String getNome() { 
@@ -64,13 +62,6 @@ public class Filme {
     }
     public void setQuantidade_criticos(int quantidade_criticos) {
         this.quantidade_criticos = quantidade_criticos; 
-    }
-
-    public Critica getCritica() {
-        return critica;
-    }
-    public void setCritica(Critica critica) { 
-        this.critica = critica; 
     }
 
     public Critica[] getVetorcriticas() {

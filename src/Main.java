@@ -1,6 +1,7 @@
 import controller.CinemaController;
 import controller.FilmeController;
 import controller.UsuarioController;
+import model.Filme;
 import view.CinemaView;
 
 public class Main {

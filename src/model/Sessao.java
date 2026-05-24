@@ -1,8 +1,5 @@
 package model;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
-
 public class Sessao {
     private Filme filme;
     private String horario;
@@ -63,14 +60,9 @@ public class Sessao {
     }
 
     public boolean horarioJaPassou() {
-        try {
-            LocalTime inicio = LocalTime.parse(horario.trim());
-            return LocalTime.now().isAfter(inicio);
-        } catch (DateTimeParseException e) {
-            return false;
-        }
+        return false; 
     }
-
+    
     public String formatarCadeira(int linha, int coluna) {
         return String.valueOf((char) ('A' + linha)) + (coluna + 1);
     }

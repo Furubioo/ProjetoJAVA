@@ -1,8 +1,6 @@
 package model;
 
 import java.io.*;
-import model.Critico;
-import model.Estudante;
 
 public class PersistenciaArquivo {
 

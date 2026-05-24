@@ -17,7 +17,7 @@ public class Estudante extends Usuario {
     @Override
     public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
         double valorBase  = sala.calcularValorBilhete(sessao.getFilme().getValor());
-        double valorFinal = valorBase / 2.0;
+        double valorFinal = calcularPrecoFinal(valorBase); // PrecoEstudante já faz /2
         return criarBilhete(sala, sessao, linha, coluna, valorFinal);
     }
 }

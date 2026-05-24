@@ -28,7 +28,9 @@ public class CinemaController {
 
     public Bilhete comprarBilhete(Sessao sessao, Sala sala, int linha, int coluna, CupomPromocional cupom) throws VendasException {
         Bilhete bilhete = comprarBilhete(sessao, sala, linha, coluna);
-        bilhete.setValor(bilhete.getValor() * (1 - cupom.getDesconto()));
+        if (cupom != null && cupom.getDesconto() > 0) {
+            bilhete.setValor(bilhete.getValor() * (1 - cupom.getDesconto()));
+        }
         return bilhete;
     }
 
@@ -59,11 +61,11 @@ public class CinemaController {
 
     public Bilhete[] comprarMultiplosBilhetes(Sessao sessao, Sala sala, int quantidade, CupomPromocional cupom) throws VendasException {
         Bilhete[] bilhetes = comprarMultiplosBilhetes(sessao, sala, quantidade);
-
-        for (Bilhete bilhete : bilhetes) {
-            bilhete.setValor(bilhete.getValor() * (1 - cupom.getDesconto()));
+        if (cupom != null && cupom.getDesconto() > 0) {
+            for (Bilhete bilhete : bilhetes) {
+                bilhete.setValor(bilhete.getValor() * (1 - cupom.getDesconto()));
+            }
         }
-
         return bilhetes;
     }
 

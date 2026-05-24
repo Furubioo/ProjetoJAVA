@@ -273,15 +273,15 @@ public class CinemaView {
             }
             System.out.println("0. Finalizar");
             System.out.print("Escolha: ");
-            int op = lerInt() - 1;
+            int op = lerInt(); 
 
-            if (op < 0 || op >= produtos.length) {
+            if (op == 0 || op < 0 || op > produtos.length) {
                 continuar = false;
             } 
             else {
-                compra.adicionarProduto(produtos[op], cupom);
+                compra.adicionarProduto(produtos[op - 1], cupom); 
                 System.out.println("Produto adicionado!");
-            }
+}
         }
     }
 

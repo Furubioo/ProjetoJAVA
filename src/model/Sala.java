@@ -3,8 +3,8 @@ package model;
 public class Sala {
 
     public static final String[] HORARIOS = {
-        "08:00", "10:00", "12:00", "14:00",
-        "16:00", "18:00", "20:00", "22:00"
+        "08:00", "09:30", "11:00", "12:30", "14:00",
+        "15:30", "17:00", "18:30", "20:00", "21:30", "23:00"
     };
 
     private static final int TOTAL_SESSOES = HORARIOS.length;

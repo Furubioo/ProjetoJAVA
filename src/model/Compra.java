@@ -56,20 +56,15 @@ public class Compra {
     }
 
     public void adicionarProduto(Produto produto) {
-        adicionarProdutoComValor(produto, produto.getPreco());
+        adicionarProduto(produto, CupomPromocional.NENHUM);
     }
 
     public void adicionarProduto(Produto produto, CupomPromocional cupom) {
-        double precoFinal = produto.getPreco() * (1 - cupom.getDesconto());
-        adicionarProdutoComValor(produto, precoFinal);
-    }
-
-    private void adicionarProdutoComValor(Produto produto, double precoFinal) {
         if (qtdProdutos >= produtos.length) {
-            System.out.println("Não e mais possivel adicionar produtos.");
+            System.out.println("Não é mais possível adicionar produtos.");
             return;
         }
-
+        double precoFinal = produto.getPreco() * (1 - cupom.getDesconto());
         produtos[qtdProdutos] = produto;
         precosProdutos[qtdProdutos] = precoFinal;
         qtdProdutos++;
@@ -106,4 +101,5 @@ public class Compra {
 
         return total;
     }
+
 }

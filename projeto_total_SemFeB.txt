@@ -1,0 +1,2264 @@
+PROJETO EXPORTADO PARA IA
+RAIZ: C:\Users\Flávio\Documents\GitHub\ProjetoJAVA\src
+OBS: Conteudo preservado conforme os arquivos originais.
+
+
+====================================================================================================
+ARQUIVO: Main.java
+====================================================================================================
+```java
+import controller.CinemaController;
+import controller.FilmeController;
+import controller.UsuarioController;
+import view.CinemaView;
+
+public class Main {
+    public static void main(String[] args) {
+        FilmeController filmeController = new FilmeController();
+        UsuarioController usuarioController = new UsuarioController();
+        CinemaController cinemaController = new CinemaController(filmeController);
+
+        filmeController.carregarFilmes();
+        usuarioController.carregarUsuarios();
+
+        CinemaView view = new CinemaView(cinemaController, filmeController, usuarioController);
+        view.iniciar();
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: controller/CinemaController.java
+====================================================================================================
+```java
+package controller;
+
+import java.util.Scanner;
+
+import model.Administrador;
+import model.Bilhete;
+import model.CupomPromocional;
+import model.Sala;
+import model.Sessao;
+import model.Usuario;
+import model.VendasException;
+import view.Terminal;
+
+public class CinemaController {
+
+    private Usuario usuarioLogado;
+    private Administrador adminLogado;
+    private FilmeController filmeController;
+
+    public CinemaController(FilmeController filmeController) {
+        this.filmeController = filmeController;
+    }
+    
+    public Usuario getUsuarioLogado() { 
+        return usuarioLogado; 
+    }
+    
+    public void setUsuarioLogado(Usuario u) { 
+        this.usuarioLogado = u; 
+    }
+
+    public Administrador getAdminLogado() { 
+        return adminLogado; 
+    }
+
+    public void setAdminLogado(Administrador a) { 
+        this.adminLogado = a; 
+    }
+
+    public boolean isAdminLogado() { 
+        return adminLogado != null; 
+    }
+
+    public Bilhete comprarBilhete(Sessao sessao, Sala sala,
+        int linha, int coluna) throws VendasException {
+        validarCompra(sessao, linha, coluna);
+        Bilhete bilhete = usuarioLogado.comprarBilhete(sala, sessao, linha, coluna);
+        sessao.ocuparCadeira(linha, coluna);
+        return bilhete;
+    }
+
+    public Bilhete comprarBilhete(Sessao sessao, Sala sala, int linha, int coluna,
+        CupomPromocional cupom) throws VendasException {
+        Bilhete bilhete = comprarBilhete(sessao, sala, linha, coluna);
+        if (cupom != null && cupom.getDesconto() > 0) {
+            bilhete.setValor(bilhete.getValor() * (1.0 - cupom.getDesconto()));
+        }
+        return bilhete;
+    }
+
+
+    public Bilhete[] comprarMultiplosBilhetes(Sessao sessao, Sala sala, int quantidade,
+        Scanner scanner) throws VendasException {
+        validarQuantidade(quantidade);
+        validarSessao(sessao);
+
+        int[] sugestao = sugerirCadeirasJuntas(sessao, quantidade);
+        if (sugestao == null) {
+            System.out.println("  Não há cadeiras consecutivas suficientes.");
+            return new Bilhete[0];
+        }
+
+        int linha = sugestao[0];
+        int colunaInicial = sugestao[1];
+
+        System.out.printf("  Sugestão: fileira %c, colunas %d a %d%n",
+        (char) ('A' + linha), colunaInicial + 1, colunaInicial + quantidade);
+
+        System.out.print("  Confirmar estas cadeiras? (S/N): ");
+
+        if (!scanner.nextLine().equalsIgnoreCase("S")) {
+            Terminal.aviso("Compra cancelada.");
+            return new Bilhete[0];
+        }
+
+        Bilhete[] bilhetes = new Bilhete[quantidade];
+        for (int i = 0; i < quantidade; i++) {
+            int col = colunaInicial + i;
+            validarCompra(sessao, linha, col);
+            bilhetes[i] = usuarioLogado.comprarBilhete(sala, sessao, linha, col);
+            sessao.ocuparCadeira(linha, col);
+        }
+        return bilhetes;
+    }
+
+    public Bilhete[] comprarMultiplosBilhetes(Sessao sessao, Sala sala, int quantidade, CupomPromocional cupom,
+        Scanner scanner) throws VendasException {
+        Bilhete[] bilhetes = comprarMultiplosBilhetes(sessao, sala, quantidade, scanner);
+        if (cupom != null && cupom.getDesconto() > 0) {
+            for (Bilhete b : bilhetes) {
+                b.setValor(b.getValor() * (1.0 - cupom.getDesconto()));
+            }
+        }
+        return bilhetes;
+    }
+
+
+    public void encerrarSessao(Sessao sessao) {
+        sessao.setEmCartaz(false);
+    }
+
+    private void validarQuantidade(int quantidade) {
+        if (quantidade <= 0)
+            throw new IllegalArgumentException("A quantidade de bilhetes deve ser maior que zero.");
+    }
+
+    private void validarCompra(Sessao sessao, int linha, int coluna) throws VendasException {
+        validarSessao(sessao);
+        if (!sessao.cadeiraDisponivel(linha, coluna))
+            throw new VendasException(VendasException.TipoErro.POLTRONA_OCUPADA);
+    }
+
+    private void validarSessao(Sessao sessao) throws VendasException {
+        if (!sessao.isEmCartaz())
+            throw new VendasException(VendasException.TipoErro.SESSAO_JA_PASSOU);
+
+        if (sessao.getFilme() == null ||
+                filmeController.buscarFilme(sessao.getFilme().getNome()) == null)
+            throw new VendasException(VendasException.TipoErro.FILME_FORA_DE_CARTAZ);
+    }
+
+
+    private int[] sugerirCadeirasJuntas(Sessao sessao, int quantidade) {
+        boolean[][] cadeiras  = sessao.getCadeiras();
+        int totalLinhas       = cadeiras.length;
+
+        for (int linha = totalLinhas - 1; linha >= 0; linha--) {
+            int melhorInicio           = -1;
+            int melhorDistanciaCentro  = Integer.MAX_VALUE;
+            int centro                 = cadeiras[linha].length / 2;
+            int consecutivas           = 0;
+            int inicio                 = 0;
+
+            for (int col = 0; col < cadeiras[linha].length; col++) {
+                if (!cadeiras[linha][col]) {
+                    if (consecutivas == 0) inicio = col;
+                    consecutivas++;
+                    if (consecutivas >= quantidade) {
+                        int centroBlocoAtual = inicio + quantidade / 2;
+                        int distancia        = Math.abs(centroBlocoAtual - centro);
+                        if (distancia < melhorDistanciaCentro) {
+                            melhorDistanciaCentro = distancia;
+                            melhorInicio          = inicio;
+                        }
+                    }
+                } else {
+                    consecutivas = 0;
+                }
+            }
+            if (melhorInicio != -1) return new int[]{ linha, melhorInicio };
+        }
+        return null;
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: controller/FilmeController.java
+====================================================================================================
+```java
+package controller;
+
+import model.Filme;
+import model.PersistenciaArquivo;
+
+public class FilmeController {
+
+    private Filme[] filmes;
+    private int qtdFilmes;
+    private static final int MAX = 100;
+
+    public FilmeController() {
+        this.filmes    = new Filme[MAX];
+        this.qtdFilmes = 0;
+    }
+
+    public void carregarFilmes() {
+        int[] qtdLida = new int[1];
+        Filme[] carregados = PersistenciaArquivo.carregarFilmes(qtdLida);
+        if (qtdLida[0] > 0) {
+            this.filmes    = carregados;
+            this.qtdFilmes = qtdLida[0];
+        } else {
+            carregarFilmesPadrao(); 
+        }
+    }
+
+    private void carregarFilmesPadrao() {
+        filmes[qtdFilmes++] = new Filme("Gato de Botas 2",           102, "As aventuras do Gato de Botas continuam.",          20.00);
+        filmes[qtdFilmes++] = new Filme("Avatar: O Caminho da Agua", 192, "Jake Sully vive com sua nova familia formada.",      22.00);
+        filmes[qtdFilmes++] = new Filme("John Wick 4",               169, "John Wick enfrenta seus inimigos mais poderosos.",   21.00);
+        filmes[qtdFilmes++] = new Filme("Creed III",                 116, "Adonis Creed enfrenta um rival do passado.",         19.00);
+        filmes[qtdFilmes++] = new Filme("Panico VI",                 123, "O retorno do Ghostface em Nova York.",               18.00);
+        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes); // já persiste pra próxima execução
+    }
+
+    public void salvarFilmes() {
+        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes);
+    }
+
+    public void incluirFilme(Filme filme) {
+        if (qtdFilmes < MAX) {
+            filmes[qtdFilmes++] = filme;
+            salvarFilmes();
+        } 
+        else {
+            System.out.println("Catálogo cheio.");
+        }
+    }
+
+    public void excluirFilme(String nome) {
+        for (int i = 0; i < qtdFilmes; i++) {
+            if (filmes[i].getNome().equalsIgnoreCase(nome)) {
+                for (int j = i; j < qtdFilmes - 1; j++) {
+                    filmes[j] = filmes[j + 1];
+                }
+                filmes[--qtdFilmes] = null;
+                salvarFilmes();
+                System.out.println("Filme removido: " + nome);
+                return;
+            }
+        }
+        System.out.println("Filme não encontrado: " + nome);
+    }
+
+    public void alterarFilme(String nome, Filme novosDados) {
+        for (int i = 0; i < qtdFilmes; i++) {
+            if (filmes[i].getNome().equalsIgnoreCase(nome)) {
+                filmes[i] = novosDados;
+                salvarFilmes();
+                System.out.println("Filme alterado: " + nome);
+                return;
+            }
+        }
+        System.out.println("Filme não encontrado: " + nome);
+    }
+
+    public Filme[] getFilmes() { 
+        return filmes; 
+    }
+    public int getQtdFilmes() { 
+        return qtdFilmes; 
+    }
+
+    public Filme buscarFilme(String nome) {
+        for (int i = 0; i < qtdFilmes; i++)
+            if (filmes[i].getNome().equalsIgnoreCase(nome))
+                return filmes[i];
+        return null;
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: controller/UsuarioController.java
+====================================================================================================
+```java
+package controller;
+
+import model.Administrador;
+import model.PersistenciaArquivo;
+import model.Usuario;
+
+public class UsuarioController {
+
+    private Usuario[] usuarios;
+    private int qtdUsuarios;
+    private Administrador adminPadrao;
+    private static final int MAX = 100;
+
+    public UsuarioController() {
+        this.usuarios    = new Usuario[MAX];
+        this.qtdUsuarios = 0;
+        this.adminPadrao = new Administrador("admin", 0, "admin@cinema.com", 0.0, "ADM001");
+    }
+
+    public void carregarUsuarios() {
+        int[] qtdLida    = new int[1];
+        this.usuarios    = PersistenciaArquivo.carregarUsuarios(qtdLida);
+        this.qtdUsuarios = qtdLida[0];
+    }
+
+    public void salvarUsuarios() {
+        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
+        admin.persistirUsuarios(usuarios, qtdUsuarios);
+    }
+
+    public void adicionarUsuario(Usuario usuario) {
+        if (qtdUsuarios < MAX) {
+            usuarios[qtdUsuarios++] = usuario;
+            salvarUsuarios();
+        } else {
+            System.out.println("Limite de usuários atingido.");
+        }
+    }
+
+    public void excluirUsuario(String email) {
+        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
+        int[] qtd = { qtdUsuarios };
+        admin.excluirUsuario(usuarios, qtd, email);
+        qtdUsuarios = qtd[0];
+        salvarUsuarios();
+    }
+
+    public Usuario buscarPorLogin(String user, String senha) {
+        for (int i = 0; i < qtdUsuarios; i++)
+            if (usuarios[i].getUser().equals(user) && usuarios[i].getSenha().equals(senha))
+                return usuarios[i];
+        return null;
+    }
+
+    public Usuario[] getUsuarios() { 
+        return usuarios; 
+    }
+
+    public Administrador getAdminPadrao() {
+        return adminPadrao;
+    }
+
+    public void setAdminpadrao(Administrador adminPadrao) {
+        this.adminPadrao = adminPadrao;
+    }
+    
+    public int getQtdUsuarios() { 
+        return qtdUsuarios; 
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/Administrador.java
+====================================================================================================
+```java
+package model;
+
+public class Administrador extends Base implements GerenciaDeFilmes {
+
+    private double salario;
+    private String id;
+
+    public Administrador(String nome, int idade, String email, double salario, String id) {
+        super(nome, idade, email);
+        this.salario = salario;
+        this.id = id;
+    }
+
+    public double getSalario() { return salario; }
+    public void setSalario(double salario) { this.salario = salario; }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    @Override
+    public void adicionarUsuario(Base usuario) {
+        System.out.println("[Admin] Usuario adicionado: " + usuario.getNome());
+    }
+
+    @Override
+    public void alterarUsuario(String novoNome, int novaIdade, String novoEmail) {
+        setNome(novoNome);
+        setIdade(novaIdade);
+        setEmail(novoEmail);
+    }
+
+    public void excluirUsuario(Usuario[] usuarios, int[] qtd, String email) {
+        for (int i = 0; i < qtd[0]; i++) {
+            if (usuarios[i].getEmail().equalsIgnoreCase(email)) {
+                for (int j = i; j < qtd[0] - 1; j++) {
+                    usuarios[j] = usuarios[j + 1];
+                }
+                usuarios[--qtd[0]] = null;
+                System.out.println("[Admin] Usuário removido: " + email);
+                return;
+            }
+        }
+        System.out.println("[Admin] Usuário não encontrado: " + email);
+    }
+
+    @Override
+    public void incluirFilme(Filme filme) {
+        System.out.println("[Admin] Filme incluido: " + filme.getNome());
+    }
+
+    @Override
+    public void excluirFilme(String nomeFilme) {
+        System.out.println("[Admin] Filme excluido: " + nomeFilme);
+    }
+
+    @Override
+    public void alterarFilme(String nomeFilme, Filme novosDados) {
+        System.out.println("[Admin] Filme alterado: " + nomeFilme + " -> " + novosDados.getNome());
+    }
+
+    public void persistirFilmes(Filme[] filmes, int qtd) {
+        PersistenciaArquivo.salvarFilmes(filmes, qtd);
+    }
+
+    public void persistirUsuarios(Usuario[] usuarios, int qtd) {
+        PersistenciaArquivo.salvarUsuarios(usuarios, qtd);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " | Salario: R$ " + String.format("%.2f", salario)
+                + " | ID: " + id + " [Administrador]";
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Base.java
+====================================================================================================
+```java
+package model;
+
+public abstract class Base {
+
+    private String nome;
+    private int idade;
+    private String email;
+
+    public Base(String nome, int idade, String email) {
+        this.nome = nome;
+        this.idade = idade;
+        this.email = email;
+    }
+
+    public String getNome() { 
+        return nome; 
+    }
+
+    public void setNome(String nome) { 
+        this.nome = nome; 
+    }
+
+    public int getIdade() {
+        return idade; 
+    }
+
+    public void setIdade(int idade) { 
+        this.idade = idade; 
+    }
+
+    public String getEmail() { 
+        return email; 
+    }
+    
+    public void setEmail(String email) { 
+        this.email = email; 
+    }
+
+    public abstract void adicionarUsuario(Base usuario);
+    public abstract void alterarUsuario(String novoNome, int novaIdade, String novoEmail);
+    
+    @Override
+    public String toString() {
+        return "Nome: " + nome + " | Idade: " + idade + " | Email: " + email;
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Bilhete.java
+====================================================================================================
+```java
+package model;
+
+public class Bilhete {
+    private Usuario user;
+    private String cpf;
+    private Sala sala;
+    private Sessao sessao;
+    private Filme filme;
+    private double valor;
+    private String cadeira;
+
+    public Bilhete(Usuario user, Sala sala, Sessao sessao, Filme filme, double valor, String cadeira) {
+        this.user = user;
+        this.cpf = user.getCpf();
+        this.sala = sala;
+        this.sessao = sessao;
+        this.filme = filme;
+        this.valor = valor;
+        this.cadeira = cadeira;
+    }
+
+    public Usuario getUser() { 
+        return user;
+    }
+    public void setUser(Usuario user) {
+        this.user = user; this.cpf = user.getCpf(); 
+    }
+
+    public String getCpf() {
+        return cpf; 
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf; 
+    }
+
+    public Sala getSala() {
+        return sala;
+    }
+
+    public void setSala(Sala sala) {
+        this.sala = sala; 
+    }
+
+    public Sessao getSessao() {
+        return sessao; 
+    }
+
+    public void setSessao(Sessao sessao) {
+        this.sessao = sessao; 
+    }
+
+    public Filme getFilme() {
+        return filme; 
+    }
+
+    public void setFilme(Filme filme) {
+        this.filme = filme;
+    }
+
+    public double getValor() {
+        return valor; 
+    }
+
+    public void setValor(double valor) { 
+        this.valor = valor; 
+    }
+
+    public String getCadeira() {
+        return cadeira; 
+    }
+
+    public void setCadeira(String cadeira) {
+        this.cadeira = cadeira; 
+    }
+
+    @Override
+    public String toString() {
+        return "Bilhete[" + filme.getNome() +
+               " | Sala: " + sala.getTipo().getTipo() +
+               " | Sessão: " + sessao.getHorario() +
+               " | Cadeira: " + cadeira +
+               " | CPF: " + cpf +
+               " | Valor: R$ " + String.format("%.2f", valor) + "]";
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Compra.java
+====================================================================================================
+```java
+package model;
+
+public class Compra {
+    private Produto[] produtos;
+    private double[] precosProdutos;
+    private int qtdProdutos;
+    private Bilhete[] bilhetes;
+    private int qtdBilhetes;
+
+    public Compra() {
+        this.produtos = new Produto[15];
+        this.precosProdutos = new double[15];
+        this.qtdProdutos = 0;
+        this.bilhetes = new Bilhete[15];
+        this.qtdBilhetes = 0;
+    }
+
+    public Produto[] getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(Produto[] produtos) {
+        this.produtos = produtos;
+    }
+
+    public double[] getPrecosProdutos() {
+        return precosProdutos;
+    }
+
+    public void setPrecosProdutos(double[] precosProdutos) {
+        this.precosProdutos = precosProdutos;
+    }
+
+    public int getQtdProdutos() {
+        return qtdProdutos;
+    }
+
+    public void setQtdProdutos(int qtdProdutos) {
+        this.qtdProdutos = qtdProdutos;
+    }
+
+    public Bilhete[] getBilhetes() {
+        return bilhetes;
+    }
+
+    public void setBilhetes(Bilhete[] bilhetes) {
+        this.bilhetes = bilhetes;
+    }
+
+    public int getQtdBilhetes() {
+        return qtdBilhetes;
+    }
+
+    public void setQtdBilhetes(int qtdBilhetes) {
+        this.qtdBilhetes = qtdBilhetes;
+    }
+
+    public void adicionarProduto(Produto produto) {
+        adicionarProduto(produto, CupomPromocional.NENHUM);
+    }
+
+    public void adicionarProduto(Produto produto, CupomPromocional cupom) {
+        if (qtdProdutos >= produtos.length) {
+            System.out.println("Não é mais possível adicionar produtos.");
+            return;
+        }
+        double precoFinal = produto.getPreco() * (1 - cupom.getDesconto());
+        produtos[qtdProdutos] = produto;
+        precosProdutos[qtdProdutos] = precoFinal;
+        qtdProdutos++;
+    }
+
+    public void comprarBilhetes(Bilhete novoBilhete) {
+        adicionarBilhete(novoBilhete);
+    }
+
+    public void comprarBilhetes(Bilhete novoBilhete, CupomPromocional cupom) {
+        novoBilhete.setValor(novoBilhete.getValor() * (1 - cupom.getDesconto()));
+        adicionarBilhete(novoBilhete);
+    }
+
+    private void adicionarBilhete(Bilhete novoBilhete) {
+        if (qtdBilhetes >= bilhetes.length) {
+            System.out.println("Nao e mais possivel comprar bilhetes.");
+            return;
+        }
+
+        bilhetes[qtdBilhetes++] = novoBilhete;
+    }
+
+    public double calcularTotal() {
+        double total = 0;
+
+        for (int i = 0; i < qtdBilhetes; i++) {
+            total += bilhetes[i].getValor();
+        }
+
+        for (int i = 0; i < qtdProdutos; i++) {
+            total += precosProdutos[i];
+        }
+
+        return total;
+    }
+
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Critica.java
+====================================================================================================
+```java
+package model;
+
+public class Critica {
+    private String nome;
+    private String origem;
+    private String mensagem;
+
+    public Critica(String nome, String origem, String mensagem) {
+        this.nome = nome;
+        this.origem = origem;
+        this.mensagem = mensagem;
+    }
+
+    public String getNome() {
+        return nome; 
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome; 
+    }
+
+    public String getOrigem() {
+        return origem; 
+    }
+    
+    public void setOrigem(String origem) {
+     this.origem = origem; 
+    }
+
+    public String getMensagem() { 
+        return mensagem; 
+    }
+
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + origem + "] " + nome + ": " + mensagem;
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Critico.java
+====================================================================================================
+```java
+package model;
+
+import model.strategy.PrecoCritico;
+
+public class Critico extends Usuario {
+    private String origem;
+
+    public Critico(String user, String cpf, String senha, int idade, char sexo, String email,
+        String nomeCartao, String numeroCartao, String codigoCartao, String origem) {
+        super(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, new PrecoCritico());
+        this.origem = origem;
+    }
+
+    public String getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(String origem) {
+        this.origem = origem;
+    }
+
+    public void atribuirNota(Filme filme, double nota) {
+        if (nota < 0 || nota > 10) {
+            System.out.println("Nota invalida. Informe uma nota entre 0 e 10.");
+            return;
+        }
+
+        double somaAtual = filme.getNota() * filme.getQuantidade_criticos();
+        filme.setQuantidade_criticos(filme.getQuantidade_criticos() + 1);
+        filme.setNota((somaAtual + nota) / filme.getQuantidade_criticos());
+    }
+
+    public void atribuirCritica(Filme filme, String mensagem) {
+        Critica[] criticas = filme.getVetorcriticas();
+
+        for (int i = 0; i < criticas.length; i++) {
+            if (criticas[i] == null) {
+                criticas[i] = new Critica(getUser(), origem, mensagem);
+                return;
+            }
+        }
+
+        System.out.println("Limite de criticas atingido para este filme.");
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " [Critico | Origem: " + origem + "]";
+    }
+
+
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/CupomPromocional.java
+====================================================================================================
+```java
+package model;
+
+public enum CupomPromocional {
+    NENHUM(0.0),
+    DESCONTO10(0.1),
+    DESCONTO20(0.2),
+    MEIA(0.5);
+
+    private final double desconto;
+
+    CupomPromocional(double desconto) { 
+        this.desconto = desconto; 
+    }
+
+    public double getDesconto() { 
+        return desconto; 
+    }
+
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Estudante.java
+====================================================================================================
+```java
+package model;
+
+import model.strategy.PrecoEstudante;
+
+public class Estudante extends Usuario {
+
+    public Estudante(String user, String cpf, String senha, int idade, char sexo, String email,
+        String nomeCartao, String numeroCartao, String codigoCartao) {
+        super(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, new PrecoEstudante());
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " [Estudante]";
+    }
+
+    @Override
+    public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
+        double valorBase  = sala.calcularValorBilhete(sessao.getFilme().getValor());
+        double valorFinal = calcularPrecoFinal(valorBase);
+        return criarBilhete(sala, sessao, linha, coluna, valorFinal);
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/Filme.java
+====================================================================================================
+```java
+package model;
+
+public class Filme {
+    private String nome;
+    private int duracao;
+    private String sinopse;
+    private double valor;
+    private double nota;
+    private int quantidade_criticos;
+    private Critica[] vetorcriticas = new Critica[100];
+
+    public Filme(String nome, int duracao, String sinopse, double valor) {
+        this.nome = nome;
+        this.duracao = duracao;
+        this.sinopse = sinopse;
+        this.valor = valor;
+        this.nota = 0;
+        this.quantidade_criticos = 0;
+    }
+
+    public String getNome() { 
+        return nome; 
+    }
+
+    public void setNome(String nome) { 
+        this.nome = nome; 
+    }
+
+    public int getDuracao() {
+        return duracao;  
+    }
+
+    public void setDuracao(int duracao) {
+        this.duracao = duracao; 
+    }
+
+    public String getSinopse() { 
+        return sinopse;
+    }
+    public void setSinopse(String sinopse) { 
+        this.sinopse = sinopse; 
+    }
+
+    public double getValor() { 
+        return valor; 
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor; 
+    }
+
+    public double getNota() {
+        return nota;
+    }
+
+    public void setNota(double nota) { 
+        this.nota = nota;
+    }
+
+    public int getQuantidade_criticos() { 
+        return quantidade_criticos;
+    }
+    public void setQuantidade_criticos(int quantidade_criticos) {
+        this.quantidade_criticos = quantidade_criticos; 
+    }
+
+    public Critica[] getVetorcriticas() {
+        return vetorcriticas; 
+    }
+    public void setVetorcriticas(Critica[] vetorcriticas) {
+        this.vetorcriticas = vetorcriticas;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " | " + duracao + "min | R$ " + String.format("%.2f", valor) + " | Nota: " + String.format("%.1f", nota);
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Funcionario.java
+====================================================================================================
+```java
+package model;
+
+public class Funcionario extends Base implements GerenciaDeFilmes {
+
+    private double salario;
+
+    public Funcionario(String nome, int idade, String email, double salario) {
+        super(nome, idade, email);
+        this.salario = salario;
+    }
+
+    public double getSalario() { 
+        return salario; 
+    }
+    public void setSalario(double salario) { 
+        this.salario = salario; 
+    }
+
+    @Override
+    public void adicionarUsuario(Base usuario) {
+        System.out.println("[Funcionário] Solicitação de adição registrada: " + usuario.getNome());
+    }
+
+    @Override
+    public void alterarUsuario(String novoNome, int novaIdade, String novoEmail) {
+        setNome(novoNome);
+        setIdade(novaIdade);
+        setEmail(novoEmail);
+        System.out.println("[Funcionário] Dados atualizados: " + toString());
+    }
+
+    @Override
+    public void incluirFilme(Filme filme) {
+        System.out.println("[Funcionário] Solicitado inclusão do filme: " + filme.getNome());
+    }
+
+    @Override
+    public void excluirFilme(String nomeFilme) {
+        System.out.println("[Funcionário] Solicitado exclusão do filme: " + nomeFilme);
+    }
+
+    @Override
+    public void alterarFilme(String nomeFilme, Filme novosDados) {
+        System.out.println("[Funcionário] Solicitado alteração do filme: " + nomeFilme + " -> " + novosDados.getNome());
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " | Salário: R$ " + String.format("%.2f", salario) + " [Funcionário]";
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/GerenciaDeFilmes.java
+====================================================================================================
+```java
+package model;
+
+public interface GerenciaDeFilmes {
+    void incluirFilme(Filme filme);
+    void excluirFilme(String tituloFilme);
+    void alterarFilme(String tituloFilme, Filme novosDados);
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/PersistenciaArquivo.java
+====================================================================================================
+```java
+package model;
+
+import java.io.*;
+
+public class PersistenciaArquivo {
+
+    private static final String ARQUIVO_USUARIOS = "usuarios.txt";
+    private static final String ARQUIVO_FILMES = "filmes.txt";
+    private static final int MAX = 100;
+
+    public static void salvarFilmes(Filme[] filmes, int qtd) {
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(ARQUIVO_FILMES))) {
+            for (int i = 0; i < qtd; i++) {
+                Filme f = filmes[i];
+                escritor.println(f.getNome() + "|" + f.getDuracao() + "|" +
+                f.getSinopse().replace("|", " ") + "|" + f.getValor());
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar filmes: " + e.getMessage());
+        }
+    }
+
+    public static Filme[] carregarFilmes(int[] qtdLida) {
+        Filme[] filmes = new Filme[MAX];
+        int qtd = 0;
+
+        try (BufferedReader leitor = new BufferedReader(new FileReader(ARQUIVO_FILMES))) {
+            String linha;
+            while ((linha = leitor.readLine()) != null && qtd < MAX) {
+                String[] c = linha.split("\\|");
+                if (c.length == 4) {
+                    filmes[qtd++] = new Filme(c[0], Integer.parseInt(c[1]),
+                    c[2], Double.parseDouble(c[3]));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Arquivo de filmes não encontrado. Iniciando vazio.");
+        }
+        qtdLida[0] = qtd;
+        return filmes;
+    }
+
+    public static void salvarUsuarios(Usuario[] usuarios, int qtd) {
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(ARQUIVO_USUARIOS))) {
+            for (int i = 0; i < qtd; i++) {
+                Usuario u = usuarios[i];
+                String tipo;
+                if (u instanceof Critico) {
+                    tipo = "CRITICO:" + ((Critico) u).getOrigem();
+                } 
+                else if (u instanceof Estudante) {
+                    tipo = "ESTUDANTE";
+                } 
+                else {
+                    tipo = "USUARIO";
+                }
+
+                escritor.println(
+                    u.getUser() + "|" +
+                    u.getCpf() + "|" +
+                    u.getSenha() + "|" +
+                    u.getIdade() + "|" +
+                    u.getSexo() + "|" +
+                    u.getEmail() + "|" +
+                    u.getNomecartao() + "|" +
+                    u.getNumerocartao() + "|" +
+                    u.getCodigocartao() + "|" +
+                    tipo
+                );
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar usuários: " + e.getMessage());
+        }
+    }
+
+    public static Usuario[] carregarUsuarios(int[] qtdLida) {
+        Usuario[] usuarios = new Usuario[MAX];
+        int qtd = 0;
+
+        try (BufferedReader leitor = new BufferedReader(new FileReader(ARQUIVO_USUARIOS))) {
+            String linha;
+            while ((linha = leitor.readLine()) != null && qtd < MAX) {
+                String[] c = linha.split("\\|");
+                if (c.length < 9) continue;
+
+                String user = c[0];
+                String cpf = c[1];
+                String senha = c[2];
+                int idade = Integer.parseInt(c[3]);
+                char sexo = c[4].charAt(0);
+                String email = c[5];
+                String nomeCartao = c[6];
+                String numCartao = c[7];
+                String codCartao = c[8];
+                String tipoStr = c.length >= 10 ? c[9] : "USUARIO";
+
+                Usuario u;
+                if (tipoStr.startsWith("CRITICO:")) {
+                    String origem = tipoStr.substring(8);
+                    u = new Critico(user, cpf, senha, idade, sexo, email, nomeCartao, numCartao, codCartao, origem);
+                } 
+                else if (tipoStr.equalsIgnoreCase("ESTUDANTE")) {
+                    u = new Estudante(user, cpf, senha, idade, sexo, email, nomeCartao, numCartao, codCartao);
+                } 
+                else {
+                    u = new Usuario(user, cpf, senha, idade, sexo, email, nomeCartao, numCartao, codCartao);
+                }
+                usuarios[qtd++] = u;
+            }
+        } catch (IOException e) {
+            System.out.println("Arquivo de usuários não encontrado. Iniciando vazio.");
+        }
+
+        qtdLida[0] = qtd;
+        return usuarios;
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Produto.java
+====================================================================================================
+```java
+package model;
+
+public enum Produto {
+    PIPOCA_PEQUENA("Pipoca Pequena", 10.0),
+    PIPOCA_GRANDE("Pipoca Grande", 15.0),
+    REFRIGERANTE_300ML("Refrigerante 300ml", 8.0),
+    REFRIGERANTE_500ML("Refrigerante 500ml", 10.0),
+    CHOCOLATE("Chocolate", 7.0),
+    AGUA_MINERAL("Água Mineral", 5.0);
+
+    private final String nome;
+    private final double preco;
+
+    Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    public String getNome() { 
+        return nome; 
+    }
+    public double getPreco() {
+        return preco; 
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Sala.java
+====================================================================================================
+```java
+package model;
+
+public class Sala {
+
+    public static final String[] HORARIOS = {
+        "08:00", "09:30", "11:00", "12:30", "14:00",
+        "15:30", "17:00", "18:30", "20:00", "21:30", "23:00"
+    };
+
+    private static final int TOTAL_SESSOES = HORARIOS.length;
+
+    private Sessao[] listaSessoes;
+    private TipoSala tipo;
+
+    public Sala(TipoSala tipo) {
+        this.listaSessoes = new Sessao[TOTAL_SESSOES];
+        this.tipo = tipo;
+    }
+
+    public Sessao[] getListaSessoes() {
+        return listaSessoes;
+    }
+
+    public TipoSala getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoSala tipo) {
+        this.tipo = tipo;
+    }
+
+    public double calcularValorBilhete(double valorBase) {
+        return valorBase * tipo.getMultiplicador();
+    }
+
+    public void adicionarSessao(Sessao sessao, int indiceHorario) {
+        if (indiceHorario >= 0 && indiceHorario < TOTAL_SESSOES) {
+            listaSessoes[indiceHorario] = sessao;
+        } else {
+            System.out.println("Horário inválido para esta sala.");
+        }
+    }
+
+    public void removerSessao(int indiceHorario) {
+        if (indiceHorario >= 0 && indiceHorario < TOTAL_SESSOES) {
+            listaSessoes[indiceHorario] = null;
+        }
+    }
+
+    public Sessao buscarSessao(int indice) {
+        if (indice < 0 || indice >= TOTAL_SESSOES) return null;
+        return listaSessoes[indice];
+    }
+
+    public void listarSessoesDisponiveis() {
+        for (int i = 0; i < TOTAL_SESSOES; i++) {
+            if (listaSessoes[i] != null) {
+                System.out.printf("%d. %s | %s%n", i + 1, HORARIOS[i], listaSessoes[i]);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Sala [" + tipo.getTipo() + "] | " + TOTAL_SESSOES + " horários";
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Sessao.java
+====================================================================================================
+```java
+package model;
+
+public class Sessao {
+    private Filme filme;
+    private String horario;
+    private boolean[][] cadeiras;
+    private boolean emCartaz;
+
+    public Sessao(Filme filme, String horario) {
+        this.filme    = filme;
+        this.horario  = horario;
+        this.cadeiras = new boolean[10][15];
+        this.emCartaz = true;
+    }
+
+    public Filme getFilme() { 
+        return filme; 
+    }
+
+    public void setFilme(Filme filme) {
+        this.filme = filme; 
+    }
+
+    public String getHorario() { 
+        return horario; 
+    }
+
+    public void setHorario(String h) {
+        this.horario = h; 
+    }
+
+    public boolean[][] getCadeiras() { 
+        return cadeiras; 
+    }
+
+    public void setCadeiras(boolean[][] c) {
+        this.cadeiras = c; 
+        }
+
+    public boolean isEmCartaz() { 
+        return emCartaz; 
+    }
+    public void setEmCartaz(boolean b) { 
+        this.emCartaz = b; 
+    }
+
+    public boolean cadeiraDisponivel(int linha, int coluna) {
+        if (!posicaoValida(linha, coluna)) return false;
+        return !cadeiras[linha][coluna];
+    }
+
+    public void ocuparCadeira(int linha, int coluna) {
+        if (posicaoValida(linha, coluna)) cadeiras[linha][coluna] = true;
+    }
+
+    public boolean horarioJaPassou() {
+        return false;
+    }
+
+    public String formatarCadeira(int linha, int coluna) {
+        return String.valueOf((char) ('A' + linha)) + (coluna + 1);
+    }
+
+    private boolean posicaoValida(int linha, int coluna) {
+        return linha >= 0 && linha < cadeiras.length
+        && coluna >= 0 && coluna < cadeiras[linha].length;
+    }
+
+    @Override
+    public String toString() {
+        return "Sessao[" + (filme != null ? filme.getNome() : "sem filme")
+        + " | " + horario + " | " + (emCartaz ? "em cartaz" : "encerrada") + "]";
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/TipoSala.java
+====================================================================================================
+```java
+package model;
+
+public enum TipoSala {
+    COMUM("Comum", 1.0),
+    SALA_3D("3D", 1.2),
+    XD("XD", 1.3),
+    XD_3D("XD/3D", 1.4);
+
+    private final String tipo;
+    private final double multiplicador;
+
+    TipoSala(String tipo, double multiplicador) {
+        this.tipo = tipo;
+        this.multiplicador = multiplicador;
+    }
+
+    public String getTipo() {
+        return tipo; 
+    }
+    
+    public double getMultiplicador() {
+        return multiplicador; 
+    }
+
+    @Override
+    public String toString() { 
+        return tipo; 
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/Usuario.java
+====================================================================================================
+```java
+package model;
+
+import model.strategy.EstrategiaPreco;
+import model.strategy.PrecoComum;
+
+public class Usuario {
+    private String user;
+    private String cpf;
+    private String senha;
+    private int idade;
+    private char sexo;
+    private String email;
+    private String nomeCartao;
+    private String numeroCartao;
+    private String codigoCartao;
+    private EstrategiaPreco estrategiaPreco;
+
+    public Usuario(String user, String cpf, String senha, int idade, char sexo, String email,
+        String nomeCartao, String numeroCartao, String codigoCartao) {
+        this(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, new PrecoComum());
+    }
+
+    public Usuario(String user, String cpf, String senha, int idade, char sexo, String email, 
+        String nomeCartao, String numeroCartao, String codigoCartao,
+        EstrategiaPreco estrategiaPreco) {
+        this.user = user;
+        this.cpf = cpf;
+        this.senha = senha;
+        this.idade = idade;
+        this.sexo = sexo;
+        this.email = email;
+        this.nomeCartao = nomeCartao;
+        this.numeroCartao = numeroCartao;
+        this.codigoCartao = codigoCartao;
+        this.estrategiaPreco = estrategiaPreco;
+    }
+
+    public EstrategiaPreco getEstrategiaPreco() {
+        return estrategiaPreco;
+    }
+
+    public void setEstrategiaPreco(EstrategiaPreco estrategiaPreco) {
+        this.estrategiaPreco = estrategiaPreco;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public void setIdade(int idade) {
+        this.idade = idade;
+    }
+
+    public char getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(char sexo) {
+        this.sexo = sexo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNomecartao() {
+        return nomeCartao;
+    }
+
+    public void setNomecartao(String nomeCartao) {
+        this.nomeCartao = nomeCartao;
+    }
+
+    public String getNumerocartao() {
+        return numeroCartao;
+    }
+
+    public void setNumerocartao(String numeroCartao) {
+        this.numeroCartao = numeroCartao;
+    }
+
+    public String getCodigocartao() {
+        return codigoCartao;
+    }
+
+    public void setCodigocartao(String codigoCartao) {
+        this.codigoCartao = codigoCartao;
+    }
+
+    public void realizarCompra() {
+        System.out.println(user + " realizou a compra.");
+    }
+
+    public void alterarCompra() {
+        System.out.println(user + " solicitou alteracao da compra.");
+    }
+
+    public void cancelarCompra() {
+        System.out.println(user + " solicitou cancelamento da compra.");
+    }
+
+    public double calcularPrecoFinal(double precoBase) {
+        return estrategiaPreco.calcularPreco(precoBase);
+    }
+
+    public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
+        double valorBase = sala.calcularValorBilhete(sessao.getFilme().getValor());
+        double valorFinal = calcularPrecoFinal(valorBase);
+        return criarBilhete(sala, sessao, linha, coluna, valorFinal);
+    }
+
+    protected Bilhete criarBilhete(Sala sala, Sessao sessao, int linha, int coluna, double valorFinal) {
+        return new Bilhete(this, sala, sessao, sessao.getFilme(), valorFinal, sessao.formatarCadeira(linha, coluna));
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario: " + user + " | CPF: " + cpf + " | Email: " + email;
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/VendasException.java
+====================================================================================================
+```java
+package model;
+
+public class VendasException extends Exception {
+
+    public enum TipoErro {
+        SESSAO_JA_PASSOU,
+        POLTRONA_OCUPADA,
+        FILME_FORA_DE_CARTAZ
+    }
+
+    private final TipoErro tipoErro;
+
+    public VendasException(TipoErro tipoErro) {
+        super(getMensagem(tipoErro));
+        this.tipoErro = tipoErro;
+    }
+
+    public TipoErro getTipoErro() { 
+        return tipoErro; 
+    }
+
+    private static String getMensagem(TipoErro tipo) {
+        switch (tipo) {
+            case SESSAO_JA_PASSOU:
+                return "Não é possível comprar: o horário da sessão já passou.";
+            case POLTRONA_OCUPADA:
+                return "A poltrona selecionada já está ocupada. Escolha outra.";
+            case FILME_FORA_DE_CARTAZ:
+                return "O filme selecionado não está mais em cartaz.";
+            default:
+                return "Erro desconhecido na compra.";
+        }
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/strategy/EstrategiaPreco.java
+====================================================================================================
+```java
+package model.strategy;
+
+public interface EstrategiaPreco {
+    double calcularPreco(double precoBase);
+}
+```
+
+
+====================================================================================================
+ARQUIVO: model/strategy/PrecoComum.java
+====================================================================================================
+```java
+package model.strategy;
+
+public class PrecoComum implements EstrategiaPreco {
+    @Override
+    public double calcularPreco(double precoBase) {
+        return precoBase;
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/strategy/PrecoCritico.java
+====================================================================================================
+```java
+package model.strategy;
+
+public class PrecoCritico implements EstrategiaPreco {
+    @Override
+    public double calcularPreco(double precoBase) {
+        return 0;
+    }
+}
+
+```
+
+
+====================================================================================================
+ARQUIVO: model/strategy/PrecoEstudante.java
+====================================================================================================
+```java
+package model.strategy;
+
+public class PrecoEstudante implements EstrategiaPreco {
+    @Override
+    public double calcularPreco(double precoBase) {
+        return precoBase / 2.0;
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: view/CinemaView.java
+====================================================================================================
+```java
+package view;
+
+import controller.CinemaController;
+import controller.FilmeController;
+import controller.UsuarioController;
+import model.Administrador;
+import model.Bilhete;
+import model.Compra;
+import model.Critico;
+import model.CupomPromocional;
+import model.Estudante;
+import model.Filme;
+import model.Produto;
+import model.Sala;
+import model.Sessao;
+import model.TipoSala;
+import model.Usuario;
+import model.VendasException;
+
+import java.util.Scanner;
+
+public class CinemaView {
+
+    private final Scanner scanner = new Scanner(System.in);
+    private final CinemaController cinemaController;
+    private final FilmeController filmeController;
+    private final UsuarioController usuarioController;
+    private Sala[] salas;
+    private boolean salasInicializadas = false;
+
+    public CinemaView(CinemaController cinemaController, FilmeController filmeController, UsuarioController usuarioController) {
+        this.cinemaController = cinemaController;
+        this.filmeController = filmeController;
+        this.usuarioController = usuarioController;
+    }
+
+    public void iniciar() {
+        Terminal.limparTela();
+        Terminal.titulo("Sistema de Cinema");
+        menuLogin();
+    }
+
+    private void inicializarSalas() {
+        if (salasInicializadas) return;
+        TipoSala[] tipos = TipoSala.values();
+        salas = new Sala[tipos.length];
+        Filme[] filmes = filmeController.getFilmes();
+        int qtdFilmes = filmeController.getQtdFilmes();
+        for (int s = 0; s < tipos.length; s++) {
+            salas[s] = new Sala(tipos[s]);
+            for (int i = 0; i < Sala.HORARIOS.length; i++) {
+                if (qtdFilmes > 0) {
+                    salas[s].adicionarSessao(
+                        new Sessao(filmes[i % qtdFilmes], Sala.HORARIOS[i]), i);
+                }
+            }
+        }
+        salasInicializadas = true;
+    }
+
+    // ── Exibe tipo do usuário logado sem emojis (evita "?") ─────────────────
+    private void exibirIdentidade() {
+        Usuario u = cinemaController.getUsuarioLogado();
+        if (cinemaController.isAdminLogado()) {
+            System.out.println(Terminal.AMARELO + Terminal.BOLD
+                + "  [Logado como: Administrador]"
+                + Terminal.RESET);
+        } else if (u instanceof Critico) {
+            Critico c = (Critico) u;
+            System.out.println(Terminal.CIANO + Terminal.BOLD
+                + "  [Logado como: " + u.getUser()
+                + " | Critico - " + c.getOrigem() + " | entrada gratuita]"
+                + Terminal.RESET);
+        } else if (u instanceof Estudante) {
+            System.out.println(Terminal.VERDE + Terminal.BOLD
+                + "  [Logado como: " + u.getUser()
+                + " | Estudante - meia-entrada automatica]"
+                + Terminal.RESET);
+        } else if (u != null) {
+            System.out.println(Terminal.BRANCO + Terminal.BOLD
+                + "  [Logado como: " + u.getUser()
+                + " | Usuario Comum]"
+                + Terminal.RESET);
+        }
+    }
+
+    private void menuLogin() {
+        int opcao;
+        do {
+            Terminal.secao("Login");
+            System.out.println("  1. Entrar");
+            System.out.println("  2. Cadastrar");
+            System.out.println("  0. Sair");
+            Terminal.separador();
+            System.out.print("  Escolha: ");
+            opcao = lerInt();
+            switch (opcao) {
+                case 1 -> fazerLogin();
+                case 2 -> cadastrarUsuario();
+                case 0 -> Terminal.info("Encerrando o sistema. Ate logo!");
+                default -> Terminal.aviso("Opcao invalida.");
+            }
+        } while (opcao != 0);
+    }
+
+    private void fazerLogin() {
+        Terminal.secao("Acesso ao Sistema");
+        System.out.print("  Usuario: ");
+        String user = scanner.nextLine();
+        System.out.print("  Senha: ");
+        String senha = scanner.nextLine();
+
+        // Verificar admin
+        Administrador admin = usuarioController.getAdminPadrao();
+        if (user.equals(admin.getNome()) && senha.equals("admin")) {
+            cinemaController.setAdminLogado(admin);
+            cinemaController.setUsuarioLogado(null);
+            Terminal.sucesso("Bem-vindo, Administrador!");
+            menuPrincipal();
+            cinemaController.setAdminLogado(null);
+            return;
+        }
+
+        // Verificar usuário comum/estudante/crítico
+        Usuario u = usuarioController.buscarPorLogin(user, senha);
+        if (u == null) {
+            Terminal.erro("Usuario ou senha incorretos.");
+            return;
+        }
+        cinemaController.setUsuarioLogado(u);
+        cinemaController.setAdminLogado(null);
+
+        String tipoMsg;
+        if (u instanceof Critico) {
+            tipoMsg = " [Critico - " + ((Critico) u).getOrigem() + "] (entrada gratuita)";
+        } else if (u instanceof Estudante) {
+            tipoMsg = " [Estudante - meia-entrada automatica]";
+        } else {
+            tipoMsg = " [Usuario Comum]";
+        }
+        Terminal.sucesso("Bem-vindo, " + u.getUser() + "!" + tipoMsg);
+
+        // CORREÇÃO: chamar menuPrincipal após login bem-sucedido
+        menuPrincipal();
+        cinemaController.setUsuarioLogado(null);
+    }
+
+    private void cadastrarUsuario() {
+        Terminal.secao("Cadastro de Usuario");
+        System.out.print("  Usuario (login): ");
+        String user = scanner.nextLine();
+        System.out.print("  CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("  Senha: ");
+        String senha = scanner.nextLine();
+        System.out.print("  Idade: ");
+        int idade = lerInt();
+        System.out.print("  Sexo (M/F): ");
+        String sexoStr = scanner.nextLine().toUpperCase().trim();
+        char sexo = sexoStr.isEmpty() ? 'M' : sexoStr.charAt(0);
+        System.out.print("  Email: ");
+        String email = scanner.nextLine();
+        System.out.print("  Nome no cartao: ");
+        String nomeCartao = scanner.nextLine();
+        System.out.print("  Numero do cartao: ");
+        String numeroCartao = scanner.nextLine();
+        System.out.print("  Codigo verificador: ");
+        String codigoCartao = scanner.nextLine();
+
+        Terminal.secao("Tipo de Conta");
+        System.out.println("  1. Usuario comum");
+        System.out.println("  2. Estudante");
+        System.out.println("  3. Critico");
+        System.out.print("  Escolha: ");
+        int tipo = lerInt();
+
+        Usuario novoUsuario;
+        switch (tipo) {
+            case 2 -> novoUsuario = new model.Estudante(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
+            case 3 -> {
+                System.out.print("  Origem (veiculo de critica): ");
+                String origem = scanner.nextLine();
+                novoUsuario = new model.Critico(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, origem);
+            }
+            default -> novoUsuario = new Usuario(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
+        }
+
+        usuarioController.adicionarUsuario(novoUsuario);
+        Terminal.sucesso("Usuario cadastrado com sucesso!");
+    }
+
+    private void menuPrincipal() {
+        int opcao;
+        do {
+            Terminal.secao("Menu Principal");
+            exibirIdentidade();
+            Terminal.separador();
+            System.out.println("  1. Ver filmes em cartaz");
+            System.out.println("  2. Comprar ingresso");
+            System.out.println("  3. Gerenciar filmes");
+            System.out.println("  0. Sair");
+            Terminal.separador();
+            System.out.print("  Escolha: ");
+            opcao = lerInt();
+            switch (opcao) {
+                case 1 -> exibirFilmes();
+                case 2 -> {
+                    if (cinemaController.getUsuarioLogado() == null) {
+                        Terminal.erro("Apenas usuarios podem comprar ingressos.");
+                    } else {
+                        fluxoCompra();
+                    }
+                }
+                case 3 -> menuGerenciarFilmes();
+                case 0 -> {}
+                default -> Terminal.aviso("Opcao invalida.");
+            }
+        } while (opcao != 0);
+    }
+
+    private void listarFilmesParaGerencia() {
+        Filme[] filmes = filmeController.getFilmes();
+        int qtd = filmeController.getQtdFilmes();
+        if (qtd == 0) {
+            Terminal.aviso("Nenhum filme cadastrado.");
+            return;
+        }
+        Terminal.secao("Filmes Cadastrados");
+        for (int i = 0; i < qtd; i++) {
+            Filme f = filmes[i];
+            System.out.printf("  %d. %-30s %dmin  R$ %.2f  Nota: %.1f%n",
+                i + 1, f.getNome(), f.getDuracao(), f.getValor(), f.getNota());
+            System.out.printf("     Sinopse: %s%n", f.getSinopse());
+        }
+        Terminal.separador();
+    }
+
+    private void exibirFilmes() {
+        Filme[] filmes = filmeController.getFilmes();
+        int qtd = filmeController.getQtdFilmes();
+        if (qtd == 0) {
+            Terminal.aviso("Nenhum filme em cartaz.");
+            return;
+        }
+        Terminal.secao("Filmes em Cartaz");
+        for (int i = 0; i < qtd; i++) {
+            Filme f = filmes[i];
+            System.out.printf("  %d. %-30s %dmin  R$ %5.2f  Nota: %.1f%n",
+                i + 1, f.getNome(), f.getDuracao(), f.getValor(), f.getNota());
+        }
+        Terminal.separador();
+    }
+
+    private void fluxoCompra() {
+        exibirIdentidade();
+        inicializarSalas();
+        Sala sala = escolherSala();
+        if (sala == null) return;
+
+        Filme[] filmes = filmeController.getFilmes();
+        int qtdFilmes = filmeController.getQtdFilmes();
+
+        if (qtdFilmes == 0) {
+            Terminal.aviso("Nenhum filme em cartaz.");
+            return;
+        }
+
+        Terminal.secao("Filmes Disponiveis");
+        for (int i = 0; i < qtdFilmes; i++) {
+            System.out.printf("  %d. %-30s %dmin  R$ %.2f  Nota: %.1f%n",
+                i + 1, filmes[i].getNome(), filmes[i].getDuracao(),
+                filmes[i].getValor(), filmes[i].getNota());
+        }
+        Terminal.separador();
+        System.out.print("  Escolha o filme: ");
+        int idxFilme = lerInt() - 1;
+        if (idxFilme < 0 || idxFilme >= qtdFilmes) {
+            Terminal.erro("Filme invalido.");
+            return;
+        }
+
+        Filme filmeSelecionado = filmes[idxFilme];
+
+        // CORREÇÃO: associar o filme escolhido a todas as sessões da sala
+        // antes de exibi-las, para que o preço e o mapa reflitam o filme correto.
+        Sessao[] sessoes = sala.getListaSessoes();
+        int[] indicesValidos = new int[sessoes.length];
+        int contador = 0;
+
+        Terminal.secao("Horarios Disponiveis -- " + filmeSelecionado.getNome());
+        for (int i = 0; i < sessoes.length; i++) {
+            if (sessoes[i] != null && sessoes[i].isEmCartaz()) {
+                // Atualiza o filme da sessão para o selecionado
+                sessoes[i].setFilme(filmeSelecionado);
+                System.out.printf("  %d. %s  R$ %5.2f  [DISPONIVEL]%n",
+                    contador + 1,
+                    sessoes[i].getHorario(),
+                    sala.calcularValorBilhete(filmeSelecionado.getValor()));
+                indicesValidos[contador] = i;
+                contador++;
+            }
+        }
+
+        if (contador == 0) {
+            Terminal.aviso("Nenhum horario disponivel para este filme.");
+            return;
+        }
+
+        Terminal.separador();
+        System.out.print("  Escolha o horario: ");
+        int escolha = lerInt() - 1;
+        if (escolha < 0 || escolha >= contador) {
+            Terminal.erro("Horario invalido.");
+            return;
+        }
+
+        Sessao sessao = sessoes[indicesValidos[escolha]];
+
+        System.out.print("  Quantos bilhetes? ");
+        int qtd = lerInt();
+        if (qtd <= 0) {
+            Terminal.erro("Quantidade invalida.");
+            return;
+        }
+
+        CupomPromocional cupom = escolherCupom();
+        Compra compra = new Compra();
+
+        try {
+            if (qtd == 1) {
+                exibirMapa(sessao);
+                System.out.print("  Fileira (A-J): ");
+                String fileiraStr = scanner.nextLine().toUpperCase().trim();
+                if (fileiraStr.isEmpty()) { Terminal.erro("Fileira invalida."); return; }
+                char fileira = fileiraStr.charAt(0);
+                System.out.print("  Coluna (1-15): ");
+                int coluna = lerInt() - 1;
+
+                Bilhete bilhete = cinemaController.comprarBilhete(sessao, sala, fileira - 'A', coluna, cupom);
+                compra.comprarBilhetes(bilhete);
+                Terminal.sucesso("Compra realizada!");
+                System.out.println("  " + bilhete);
+            } else {
+                Terminal.info("Buscando " + qtd + " cadeiras consecutivas...");
+                exibirMapa(sessao);
+
+                Bilhete[] bilhetes = cinemaController.comprarMultiplosBilhetes(sessao, sala, qtd, cupom, scanner);
+                if (bilhetes.length == 0) return;
+
+                Terminal.sucesso(qtd + " bilhetes comprados!");
+                for (Bilhete b : bilhetes) {
+                    compra.comprarBilhetes(b);
+                    System.out.println("  " + b);
+                }
+            }
+
+            adicionarProdutosAoCarrinho(compra, cupom);
+            Terminal.separador();
+            System.out.printf(Terminal.BOLD + "  Total da compra: R$ %.2f%n" + Terminal.RESET, compra.calcularTotal());
+            Terminal.separador();
+
+        } catch (VendasException e) {
+            Terminal.erro(e.getMessage());
+        }
+    }
+
+    private void adicionarProdutosAoCarrinho(Compra compra, CupomPromocional cupom) {
+        System.out.print("\n  Deseja adicionar produtos de balcao? (S/N): ");
+        if (!scanner.nextLine().equalsIgnoreCase("S")) return;
+
+        boolean continuar = true;
+        while (continuar) {
+            Terminal.secao("Produtos Disponiveis");
+            Produto[] produtos = Produto.values();
+            for (int i = 0; i < produtos.length; i++) {
+                System.out.printf("  %d. %-25s R$ %.2f%n", i + 1, produtos[i].getNome(), produtos[i].getPreco());
+            }
+            System.out.println("  0. Finalizar");
+            Terminal.separador();
+            System.out.print("  Escolha: ");
+            int op = lerInt();
+
+            if (op == 0 || op < 0 || op > produtos.length) {
+                continuar = false;
+            } else {
+                compra.adicionarProduto(produtos[op - 1], cupom);
+                Terminal.sucesso("Produto adicionado!");
+            }
+        }
+    }
+
+    private Sala escolherSala() {
+        inicializarSalas();
+        Terminal.secao("Escolha a Sala");
+        for (int i = 0; i < salas.length; i++)
+            System.out.printf("  %d. %-10s (multiplicador x%.1f)%n",
+                i + 1, salas[i].getTipo().getTipo(), salas[i].getTipo().getMultiplicador());
+        Terminal.separador();
+        System.out.print("  Escolha: ");
+        int op = lerInt() - 1;
+        if (op < 0 || op >= salas.length) {
+            Terminal.erro("Opcao invalida.");
+            return null;
+        }
+        return salas[op];
+    }
+
+    private void exibirMapa(Sessao sessao) {
+        System.out.println();
+        Terminal.secao("Mapa de Assentos -- " + sessao.getFilme().getNome());
+        System.out.print("      ");
+        for (int c = 1; c <= 15; c++)
+            System.out.printf(Terminal.DIM + "%2d " + Terminal.RESET, c);
+        System.out.println();
+
+        boolean[][] cadeiras = sessao.getCadeiras();
+        for (int l = 0; l < 10; l++) {
+            System.out.printf("  %c   ", (char) ('A' + l));
+            for (int c = 0; c < 15; c++) {
+                if (cadeiras[l][c])
+                    System.out.print(Terminal.VERMELHO + " X " + Terminal.RESET);
+                else
+                    System.out.print(Terminal.VERDE + " O " + Terminal.RESET);
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println(Terminal.VERDE + "  O = livre  " + Terminal.RESET +
+                           Terminal.VERMELHO + "  X = ocupado" + Terminal.RESET);
+        Terminal.separador();
+    }
+
+    private CupomPromocional escolherCupom() {
+        System.out.print("\n  Deseja usar cupom? (S/N): ");
+        if (!scanner.nextLine().equalsIgnoreCase("S"))
+            return CupomPromocional.NENHUM;
+
+        Terminal.secao("Cupons Disponiveis");
+        System.out.println("  1. DESCONTO10 -- 10% de desconto");
+        System.out.println("  2. DESCONTO20 -- 20% de desconto");
+        System.out.println("  3. MEIA       -- 50% de desconto");
+        System.out.print("  Escolha: ");
+
+        return switch (lerInt()) {
+            case 1 -> CupomPromocional.DESCONTO10;
+            case 2 -> CupomPromocional.DESCONTO20;
+            case 3 -> CupomPromocional.MEIA;
+            default -> CupomPromocional.NENHUM;
+        };
+    }
+
+    private void menuGerenciarFilmes() {
+        if (!cinemaController.isAdminLogado()) {
+            Terminal.erro("Acesso negado. Apenas administradores podem gerenciar filmes.");
+            return;
+        }
+        int opcao;
+        do {
+            Terminal.secao("Gerenciar Filmes");
+            System.out.println("  1. Incluir filme");
+            System.out.println("  2. Excluir filme");
+            System.out.println("  3. Alterar filme");
+            System.out.println("  0. Voltar");
+            Terminal.separador();
+            System.out.print("  Escolha: ");
+            opcao = lerInt();
+            switch (opcao) {
+                case 1 -> incluirFilme();
+                case 2 -> excluirFilme();
+                case 3 -> alterarFilme();
+                case 0 -> {}
+                default -> Terminal.aviso("Opcao invalida.");
+            }
+        } while (opcao != 0);
+    }
+
+    private void incluirFilme() {
+        Terminal.secao("Incluir Filme");
+        System.out.print("  Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("  Duracao (min): ");
+        int dur = lerInt();
+        System.out.print("  Sinopse: ");
+        String sinopse = scanner.nextLine();
+        System.out.print("  Valor (R$): ");
+        double valor = lerDouble();
+        filmeController.incluirFilme(new Filme(nome, dur, sinopse, valor));
+        Terminal.sucesso("Filme incluido com sucesso!");
+    }
+
+    private void excluirFilme() {
+        listarFilmesParaGerencia();
+        if (filmeController.getQtdFilmes() == 0) return;
+        System.out.print("  Nome do filme a excluir: ");
+        String nome = scanner.nextLine();
+        filmeController.excluirFilme(nome);
+    }
+
+    private void alterarFilme() {
+        listarFilmesParaGerencia();
+        if (filmeController.getQtdFilmes() == 0) return;
+        System.out.print("  Nome atual do filme: ");
+        String nome = scanner.nextLine();
+        System.out.print("  Novo nome: ");
+        String novoNome = scanner.nextLine();
+        System.out.print("  Duracao (min): ");
+        int dur = lerInt();
+        System.out.print("  Sinopse: ");
+        String sinopse = scanner.nextLine();
+        System.out.print("  Valor (R$): ");
+        double valor = lerDouble();
+        filmeController.alterarFilme(nome, new Filme(novoNome, dur, sinopse, valor));
+        Terminal.sucesso("Filme alterado com sucesso!");
+    }
+
+    private int lerInt() {
+        try {
+            return Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            Terminal.aviso("Entrada invalida, usando 0.");
+            return 0;
+        }
+    }
+
+    private double lerDouble() {
+        try {
+            return Double.parseDouble(scanner.nextLine().trim().replace(",", "."));
+        } catch (NumberFormatException e) {
+            Terminal.aviso("Entrada invalida, usando 0.0.");
+            return 0.0;
+        }
+    }
+}
+```
+
+
+====================================================================================================
+ARQUIVO: view/Terminal.java
+====================================================================================================
+```java
+package view;
+
+import java.io.PrintStream;
+
+public class Terminal {
+
+    public static final String RESET   = "\u001B[0m";
+    public static final String BOLD    = "\u001B[1m";
+    public static final String DIM     = "\u001B[2m";
+
+    public static final String PRETO   = "\u001B[30m";
+    public static final String VERMELHO= "\u001B[31m";
+    public static final String VERDE   = "\u001B[32m";
+    public static final String AMARELO = "\u001B[33m";
+    public static final String AZUL    = "\u001B[34m";
+    public static final String ROXO    = "\u001B[35m";
+    public static final String CIANO   = "\u001B[36m";
+    public static final String BRANCO  = "\u001B[37m";
+
+    // Garante que o PrintStream usa UTF-8 (chamado pelo Main, mas deixamos
+    // aqui como salvaguarda para quando Terminal for usado isoladamente)
+    public static void configurarEncoding() {
+        try {
+            System.setOut(new PrintStream(System.out, true, "UTF-8"));
+            System.setErr(new PrintStream(System.err, true, "UTF-8"));
+        } catch (Exception ignored) {}
+    }
+
+    public static void sucesso(String msg) {
+        System.out.println(VERDE + BOLD + "[OK] " + msg + RESET);
+    }
+
+    public static void erro(String msg) {
+        System.out.println(VERMELHO + BOLD + "[ERRO] " + msg + RESET);
+    }
+
+    public static void aviso(String msg) {
+        System.out.println(AMARELO + BOLD + "[AVISO] " + msg + RESET);
+    }
+
+    public static void info(String msg) {
+        System.out.println(CIANO + "[INFO] " + msg + RESET);
+    }
+
+    public static void titulo(String msg) {
+        int largura = 45;
+        String linha = "=".repeat(largura);
+        System.out.println();
+        System.out.println(AZUL + BOLD + "+" + linha + "+");
+        System.out.printf( AZUL + BOLD + "|  %-" + (largura - 2) + "s|%n", msg);
+        System.out.println(AZUL + BOLD + "+" + linha + "+" + RESET);
+    }
+
+    public static void secao(String msg) {
+        System.out.println();
+        System.out.println(ROXO + BOLD + "+-- " + msg + " " + "-".repeat(Math.max(0, 40 - msg.length())) + RESET);
+    }
+
+    public static void separador() {
+        System.out.println(DIM + "-".repeat(47) + RESET);
+    }
+
+    public static void limparTela() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+}
+```
+
+
+====================================================================================================
+RESUMO
+====================================================================================================
+Arquivos adicionados: 28
+Arquivos ignorados: 0
+Erros: 0

@@ -10,7 +10,7 @@ public class FilmeController {
     private static final int MAX = 100;
 
     public FilmeController() {
-        this.filmes    = new Filme[MAX];
+        this.filmes = new Filme[MAX];
         this.qtdFilmes = 0;
     }
 
@@ -18,7 +18,7 @@ public class FilmeController {
         int[] qtdLida = new int[1];
         Filme[] carregados = PersistenciaArquivo.carregarFilmes(qtdLida);
         if (qtdLida[0] > 0) {
-            this.filmes    = carregados;
+            this.filmes = carregados;
             this.qtdFilmes = qtdLida[0];
         } else {
             carregarFilmesPadrao(); 
@@ -31,7 +31,7 @@ public class FilmeController {
         filmes[qtdFilmes++] = new Filme("John Wick 4",               169, "John Wick enfrenta seus inimigos mais poderosos.",   21.00);
         filmes[qtdFilmes++] = new Filme("Creed III",                 116, "Adonis Creed enfrenta um rival do passado.",         19.00);
         filmes[qtdFilmes++] = new Filme("Panico VI",                 123, "O retorno do Ghostface em Nova York.",               18.00);
-        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes); // já persiste pra próxima execução
+        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes);
     }
 
     public void salvarFilmes() {

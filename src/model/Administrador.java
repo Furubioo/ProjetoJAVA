@@ -29,8 +29,18 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         setEmail(novoEmail);
     }
 
-    public void excluirUsuario(String email) {
-        System.out.println("[Admin] Usuario com email '" + email + "' excluido.");
+    public void excluirUsuario(Usuario[] usuarios, int[] qtd, String email) {
+        for (int i = 0; i < qtd[0]; i++) {
+            if (usuarios[i].getEmail().equalsIgnoreCase(email)) {
+                for (int j = i; j < qtd[0] - 1; j++) {
+                    usuarios[j] = usuarios[j + 1];
+                }
+                usuarios[--qtd[0]] = null;
+                System.out.println("[Admin] Usuário removido: " + email);
+                return;
+            }
+        }
+        System.out.println("[Admin] Usuário não encontrado: " + email);
     }
 
     @Override

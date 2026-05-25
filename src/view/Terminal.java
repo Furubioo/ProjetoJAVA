@@ -4,21 +4,18 @@ import java.io.PrintStream;
 
 public class Terminal {
 
-    public static final String RESET   = "\u001B[0m";
-    public static final String BOLD    = "\u001B[1m";
-    public static final String DIM     = "\u001B[2m";
-
-    public static final String PRETO   = "\u001B[30m";
-    public static final String VERMELHO= "\u001B[31m";
-    public static final String VERDE   = "\u001B[32m";
+    public static final String RESET = "\u001B[0m";
+    public static final String BOLD = "\u001B[1m";
+    public static final String DIM = "\u001B[2m";
+    public static final String PRETO = "\u001B[30m";
+    public static final String VERMELHO = "\u001B[31m";
+    public static final String VERDE = "\u001B[32m";
     public static final String AMARELO = "\u001B[33m";
-    public static final String AZUL    = "\u001B[34m";
-    public static final String ROXO    = "\u001B[35m";
-    public static final String CIANO   = "\u001B[36m";
-    public static final String BRANCO  = "\u001B[37m";
+    public static final String AZUL = "\u001B[34m";
+    public static final String ROXO = "\u001B[35m";
+    public static final String CIANO = "\u001B[36m";
+    public static final String BRANCO = "\u001B[37m";
 
-    // Garante que o PrintStream usa UTF-8 (chamado pelo Main, mas deixamos
-    // aqui como salvaguarda para quando Terminal for usado isoladamente)
     public static void configurarEncoding() {
         try {
             System.setOut(new PrintStream(System.out, true, "UTF-8"));

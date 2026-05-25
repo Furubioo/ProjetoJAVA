@@ -7,8 +7,8 @@ public class Sessao {
     private boolean emCartaz;
 
     public Sessao(Filme filme, String horario) {
-        this.filme    = filme;
-        this.horario  = horario;
+        this.filme = filme;
+        this.horario = horario;
         this.cadeiras = new boolean[10][15];
         this.emCartaz = true;
     }
@@ -35,7 +35,7 @@ public class Sessao {
 
     public void setCadeiras(boolean[][] c) {
         this.cadeiras = c; 
-        }
+    }
 
     public boolean isEmCartaz() { 
         return emCartaz; 

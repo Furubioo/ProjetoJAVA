@@ -7,74 +7,68 @@ public class Sessao {
     private boolean emCartaz;
 
     public Sessao(Filme filme, String horario) {
-        this.filme = filme;
-        this.horario = horario;
+        this.filme    = filme;
+        this.horario  = horario;
         this.cadeiras = new boolean[10][15];
         this.emCartaz = true;
     }
 
-    public Filme getFilme() {
-        return filme;
+    public Filme getFilme() { 
+        return filme; 
     }
 
     public void setFilme(Filme filme) {
-        this.filme = filme;
+        this.filme = filme; 
     }
 
-    public String getHorario() {
-        return horario;
+    public String getHorario() { 
+        return horario; 
     }
 
-    public void setHorario(String horario) {
-        this.horario = horario;
+    public void setHorario(String h) {
+        this.horario = h; 
     }
 
-    public boolean[][] getCadeiras() {
-        return cadeiras;
+    public boolean[][] getCadeiras() { 
+        return cadeiras; 
     }
 
-    public void setCadeiras(boolean[][] cadeiras) {
-        this.cadeiras = cadeiras;
-    }
+    public void setCadeiras(boolean[][] c) {
+        this.cadeiras = c; 
+        }
 
-    public boolean isEmCartaz() {
-        return emCartaz;
+    public boolean isEmCartaz() { 
+        return emCartaz; 
     }
-
-    public void setEmCartaz(boolean emCartaz) {
-        this.emCartaz = emCartaz;
+    public void setEmCartaz(boolean b) { 
+        this.emCartaz = b; 
     }
 
     public boolean cadeiraDisponivel(int linha, int coluna) {
-        if (!posicaoValida(linha, coluna)) {
-            return false;
-        }
-
+        if (!posicaoValida(linha, coluna)) return false;
         return !cadeiras[linha][coluna];
     }
 
     public void ocuparCadeira(int linha, int coluna) {
-        if (posicaoValida(linha, coluna)) {
-            cadeiras[linha][coluna] = true;
-        }
+        if (posicaoValida(linha, coluna)) cadeiras[linha][coluna] = true;
     }
 
     public boolean horarioJaPassou() {
-        return false; 
+        return false;
     }
-    
+
     public String formatarCadeira(int linha, int coluna) {
         return String.valueOf((char) ('A' + linha)) + (coluna + 1);
     }
 
     private boolean posicaoValida(int linha, int coluna) {
-        return linha >= 0 && linha < cadeiras.length && coluna >= 0 && coluna < cadeiras[linha].length;
+        return linha >= 0 && linha < cadeiras.length
+        && coluna >= 0 && coluna < cadeiras[linha].length;
     }
 
     @Override
     public String toString() {
-        return "Sessao[" + (filme != null ? filme.getNome() : "sem filme") +
-        " | " + horario +
-        " | " + (emCartaz ? "em cartaz" : "encerrada") + "]";
+        return "Sessao[" + (filme != null ? filme.getNome() : "sem filme")
+        + " | " + horario + " | " + (emCartaz ? "em cartaz" : "encerrada") + "]";
     }
 }

@@ -8,11 +8,13 @@ public class UsuarioController {
 
     private Usuario[] usuarios;
     private int qtdUsuarios;
+    private Administrador adminPadrao;
     private static final int MAX = 100;
 
     public UsuarioController() {
         this.usuarios    = new Usuario[MAX];
         this.qtdUsuarios = 0;
+        this.adminPadrao = new Administrador("admin", 0, "admin@cinema.com", 0.0, "ADM001");
     }
 
     public void carregarUsuarios() {
@@ -36,18 +38,11 @@ public class UsuarioController {
     }
 
     public void excluirUsuario(String email) {
-        for (int i = 0; i < qtdUsuarios; i++) {
-            if (usuarios[i].getEmail().equalsIgnoreCase(email)) {
-                for (int j = i; j < qtdUsuarios - 1; j++) {
-                    usuarios[j] = usuarios[j + 1];
-                }
-                usuarios[--qtdUsuarios] = null;
-                salvarUsuarios();
-                System.out.println("Usuário removido: " + email);
-                return;
-            }
-        }
-        System.out.println("Usuário não encontrado: " + email);
+        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
+        int[] qtd = { qtdUsuarios };
+        admin.excluirUsuario(usuarios, qtd, email);
+        qtdUsuarios = qtd[0];
+        salvarUsuarios();
     }
 
     public Usuario buscarPorLogin(String user, String senha) {
@@ -60,6 +55,15 @@ public class UsuarioController {
     public Usuario[] getUsuarios() { 
         return usuarios; 
     }
+
+    public Administrador getAdminPadrao() {
+        return adminPadrao;
+    }
+
+    public void setAdminpadrao(Administrador adminPadrao) {
+        this.adminPadrao = adminPadrao;
+    }
+    
     public int getQtdUsuarios() { 
         return qtdUsuarios; 
     }

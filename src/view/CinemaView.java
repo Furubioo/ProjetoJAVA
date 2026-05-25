@@ -58,7 +58,6 @@ public class CinemaView {
         salasInicializadas = true;
     }
 
-    // ── Exibe tipo do usuário logado sem emojis (evita "?") ─────────────────
     private void exibirIdentidade() {
         Usuario u = cinemaController.getUsuarioLogado();
         if (cinemaController.isAdminLogado()) {
@@ -110,7 +109,6 @@ public class CinemaView {
         System.out.print("  Senha: ");
         String senha = scanner.nextLine();
 
-        // Verificar admin
         Administrador admin = usuarioController.getAdminPadrao();
         if (user.equals(admin.getNome()) && senha.equals("admin")) {
             cinemaController.setAdminLogado(admin);
@@ -121,7 +119,6 @@ public class CinemaView {
             return;
         }
 
-        // Verificar usuário comum/estudante/crítico
         Usuario u = usuarioController.buscarPorLogin(user, senha);
         if (u == null) {
             Terminal.erro("Usuario ou senha incorretos.");
@@ -140,7 +137,6 @@ public class CinemaView {
         }
         Terminal.sucesso("Bem-vindo, " + u.getUser() + "!" + tipoMsg);
 
-        // CORREÇÃO: chamar menuPrincipal após login bem-sucedido
         menuPrincipal();
         cinemaController.setUsuarioLogado(null);
     }
@@ -281,8 +277,6 @@ public class CinemaView {
 
         Filme filmeSelecionado = filmes[idxFilme];
 
-        // CORREÇÃO: associar o filme escolhido a todas as sessões da sala
-        // antes de exibi-las, para que o preço e o mapa reflitam o filme correto.
         Sessao[] sessoes = sala.getListaSessoes();
         int[] indicesValidos = new int[sessoes.length];
         int contador = 0;
@@ -290,7 +284,6 @@ public class CinemaView {
         Terminal.secao("Horarios Disponiveis -- " + filmeSelecionado.getNome());
         for (int i = 0; i < sessoes.length; i++) {
             if (sessoes[i] != null && sessoes[i].isEmCartaz()) {
-                // Atualiza o filme da sessão para o selecionado
                 sessoes[i].setFilme(filmeSelecionado);
                 System.out.printf("  %d. %s  R$ %5.2f  [DISPONIVEL]%n",
                     contador + 1,

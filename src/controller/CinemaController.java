@@ -131,15 +131,15 @@ public class CinemaController {
 
 
     private int[] sugerirCadeirasJuntas(Sessao sessao, int quantidade) {
-        boolean[][] cadeiras  = sessao.getCadeiras();
-        int totalLinhas       = cadeiras.length;
+        boolean[][] cadeiras = sessao.getCadeiras();
+        int totalLinhas = cadeiras.length;
 
         for (int linha = totalLinhas - 1; linha >= 0; linha--) {
-            int melhorInicio           = -1;
-            int melhorDistanciaCentro  = Integer.MAX_VALUE;
-            int centro                 = cadeiras[linha].length / 2;
-            int consecutivas           = 0;
-            int inicio                 = 0;
+            int melhorInicio = -1;
+            int melhorDistanciaCentro = Integer.MAX_VALUE;
+            int centro = cadeiras[linha].length / 2;
+            int consecutivas = 0;
+            int inicio = 0;
 
             for (int col = 0; col < cadeiras[linha].length; col++) {
                 if (!cadeiras[linha][col]) {
@@ -147,10 +147,10 @@ public class CinemaController {
                     consecutivas++;
                     if (consecutivas >= quantidade) {
                         int centroBlocoAtual = inicio + quantidade / 2;
-                        int distancia        = Math.abs(centroBlocoAtual - centro);
+                        int distancia = Math.abs(centroBlocoAtual - centro);
                         if (distancia < melhorDistanciaCentro) {
                             melhorDistanciaCentro = distancia;
-                            melhorInicio          = inicio;
+                            melhorInicio = inicio;
                         }
                     }
                 } else {

@@ -1,6 +1,5 @@
 package controller;
 
-import model.Administrador;
 import model.Filme;
 import model.PersistenciaArquivo;
 
@@ -17,28 +16,26 @@ public class FilmeController {
 
     public void carregarFilmes() {
         int[] qtdLida = new int[1];
-        Filme[] doArquivo = PersistenciaArquivo.carregarFilmes(qtdLida);
-
+        Filme[] carregados = PersistenciaArquivo.carregarFilmes(qtdLida);
         if (qtdLida[0] > 0) {
-            this.filmes    = doArquivo;
+            this.filmes    = carregados;
             this.qtdFilmes = qtdLida[0];
         } else {
-            carregarFilmesPadrao();
+            carregarFilmesPadrao(); 
         }
     }
 
-private void carregarFilmesPadrao() {
-    filmes[qtdFilmes++] = new Filme("Gato de Botas 2",           102, "As aventuras do Gato de Botas continuam.",          20.00);
-    filmes[qtdFilmes++] = new Filme("Avatar: O Caminho da Agua", 192, "Jake Sully vive com sua nova familia formada.",      22.00);
-    filmes[qtdFilmes++] = new Filme("John Wick 4",               169, "John Wick enfrenta seus inimigos mais poderosos.",   21.00);
-    filmes[qtdFilmes++] = new Filme("Creed III",                 116, "Adonis Creed enfrenta um rival do passado.",         19.00);
-    filmes[qtdFilmes++] = new Filme("Panico VI",                 123, "O retorno do Ghostface em Nova York.",               18.00);
-    PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes); // já persiste pra próxima execução
-}
+    private void carregarFilmesPadrao() {
+        filmes[qtdFilmes++] = new Filme("Gato de Botas 2",           102, "As aventuras do Gato de Botas continuam.",          20.00);
+        filmes[qtdFilmes++] = new Filme("Avatar: O Caminho da Agua", 192, "Jake Sully vive com sua nova familia formada.",      22.00);
+        filmes[qtdFilmes++] = new Filme("John Wick 4",               169, "John Wick enfrenta seus inimigos mais poderosos.",   21.00);
+        filmes[qtdFilmes++] = new Filme("Creed III",                 116, "Adonis Creed enfrenta um rival do passado.",         19.00);
+        filmes[qtdFilmes++] = new Filme("Panico VI",                 123, "O retorno do Ghostface em Nova York.",               18.00);
+        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes); // já persiste pra próxima execução
+    }
 
     public void salvarFilmes() {
-        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
-        admin.persistirFilmes(filmes, qtdFilmes);
+        PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes);
     }
 
     public void incluirFilme(Filme filme) {

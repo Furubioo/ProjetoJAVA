@@ -12,14 +12,14 @@ public class UsuarioController {
     private static final int MAX = 100;
 
     public UsuarioController() {
-        this.usuarios    = new Usuario[MAX];
+        this.usuarios = new Usuario[MAX];
         this.qtdUsuarios = 0;
         this.adminPadrao = new Administrador("admin", 0, "admin@cinema.com", 0.0, "ADM001");
     }
 
     public void carregarUsuarios() {
-        int[] qtdLida    = new int[1];
-        this.usuarios    = PersistenciaArquivo.carregarUsuarios(qtdLida);
+        int[] qtdLida = new int[1];
+        this.usuarios = PersistenciaArquivo.carregarUsuarios(qtdLida);
         this.qtdUsuarios = qtdLida[0];
     }
 

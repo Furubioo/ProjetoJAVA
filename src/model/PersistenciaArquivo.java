@@ -12,7 +12,6 @@ public class PersistenciaArquivo {
         try (PrintWriter escritor = new PrintWriter(new FileWriter(ARQUIVO_FILMES))) {
             for (int i = 0; i < qtd; i++) {
                 Filme f = filmes[i];
-                // CORREÇÃO: incluir nota e quantidade_criticos na persistência
                 escritor.println(
                     f.getNome()                           + "|" +
                     f.getDuracao()                        + "|" +
@@ -35,8 +34,6 @@ public class PersistenciaArquivo {
             String linha;
             while ((linha = leitor.readLine()) != null && qtd < MAX) {
                 String[] c = linha.split("\\|");
-                // CORREÇÃO: aceitar tanto o formato antigo (4 campos) quanto
-                // o novo (6 campos com nota e quantidade_criticos)
                 if (c.length >= 4) {
                     Filme f = new Filme(c[0], Integer.parseInt(c[1]),
                                         c[2], Double.parseDouble(c[3]));
@@ -99,12 +96,12 @@ public class PersistenciaArquivo {
                 String cpf = c[1];
                 String senha = c[2];
                 int    idade = Integer.parseInt(c[3]);
-                char   sexo        = c[4].charAt(0);
-                String email       = c[5];
-                String nomeCartao  = c[6];
-                String numCartao   = c[7];
-                String codCartao   = c[8];
-                String tipoStr     = c.length >= 10 ? c[9] : "USUARIO";
+                char   sexo  = c[4].charAt(0);
+                String email = c[5];
+                String nomeCartao = c[6];
+                String numCartao = c[7];
+                String codCartao = c[8];
+                String tipoStr = c.length >= 10 ? c[9] : "USUARIO";
 
                 Usuario u;
                 if (tipoStr.startsWith("CRITICO:")) {

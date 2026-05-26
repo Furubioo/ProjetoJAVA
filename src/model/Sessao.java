@@ -58,7 +58,7 @@ public class Sessao {
     public boolean horarioJaPassou() {
         try {
             LocalTime agora    = LocalTime.now();
-            LocalTime horaFilme = LocalTime.parse(this.horario); // ex: "14:00"
+            LocalTime horaFilme = LocalTime.parse(this.horario);
             return agora.isAfter(horaFilme);
         } catch (Exception e) {
             return false;

@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalTime;
+
 public class Sessao {
     private Filme filme;
     private String horario;
@@ -54,7 +56,13 @@ public class Sessao {
     }
 
     public boolean horarioJaPassou() {
-        return false;
+        try {
+            LocalTime agora    = LocalTime.now();
+            LocalTime horaFilme = LocalTime.parse(this.horario); // ex: "14:00"
+            return agora.isAfter(horaFilme);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String formatarCadeira(int linha, int coluna) {

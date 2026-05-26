@@ -121,7 +121,7 @@ public class CinemaController {
     }
 
     private void validarSessao(Sessao sessao) throws VendasException {
-        if (!sessao.isEmCartaz())
+        if (!sessao.isEmCartaz() || sessao.horarioJaPassou())
             throw new VendasException(VendasException.TipoErro.SESSAO_JA_PASSOU);
 
         if (sessao.getFilme() == null ||

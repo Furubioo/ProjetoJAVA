@@ -40,6 +40,10 @@ public class CinemaView {
         menuLogin();
     }
 
+    public void resetarSalas() {
+        salasInicializadas = false;
+    }
+
     private void inicializarSalas() {
         if (salasInicializadas) return;
         TipoSala[] tipos = TipoSala.values();
@@ -135,6 +139,7 @@ public class CinemaView {
         } else {
             tipoMsg = " [Usuario Comum]";
         }
+        cinemaController.setUsuarioLogado(u);
         Terminal.sucesso("Bem-vindo, " + u.getUser() + "!" + tipoMsg);
 
         menuPrincipal();
@@ -478,6 +483,7 @@ public class CinemaView {
         System.out.print("  Valor (R$): ");
         double valor = lerDouble();
         filmeController.incluirFilme(new Filme(nome, dur, sinopse, valor));
+        resetarSalas();
         Terminal.sucesso("Filme incluido com sucesso!");
     }
 
@@ -487,6 +493,7 @@ public class CinemaView {
         System.out.print("  Nome do filme a excluir: ");
         String nome = scanner.nextLine();
         filmeController.excluirFilme(nome);
+        resetarSalas();
     }
 
     private void alterarFilme() {
@@ -503,6 +510,7 @@ public class CinemaView {
         System.out.print("  Valor (R$): ");
         double valor = lerDouble();
         filmeController.alterarFilme(nome, new Filme(novoNome, dur, sinopse, valor));
+        resetarSalas();
         Terminal.sucesso("Filme alterado com sucesso!");
     }
 

@@ -4,8 +4,9 @@ import java.io.*;
 
 public class PersistenciaArquivo {
 
-    private static final String ARQUIVO_USUARIOS = "usuarios.txt";
-    private static final String ARQUIVO_FILMES   = "filmes.txt";
+    private static final String BASE_DIR = System.getProperty("user.dir");
+    private static final String ARQUIVO_USUARIOS = BASE_DIR + java.io.File.separator + "usuarios.txt";
+    private static final String ARQUIVO_FILMES   = BASE_DIR + java.io.File.separator + "filmes.txt";
     private static final int    MAX              = 100;
 
     public static void salvarFilmes(Filme[] filmes, int qtd) {

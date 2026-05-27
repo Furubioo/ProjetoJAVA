@@ -16,8 +16,9 @@ public class Estudante extends Usuario {
 
     @Override
     public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
-        double valorBase  = sala.calcularValorBilhete(sessao.getFilme().getValor());
-        double valorFinal = calcularPrecoFinal(valorBase);
+        double valorBase = sala.calcularValorBilhete(sessao.getFilme().getValor());
+        double valorFinal = valorBase / 2.0; // meia-entrada garantida
         return criarBilhete(sala, sessao, linha, coluna, valorFinal);
     }
+
 }

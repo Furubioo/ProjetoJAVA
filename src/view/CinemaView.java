@@ -113,8 +113,8 @@ public class CinemaView {
         System.out.print("  Senha: ");
         String senha = scanner.nextLine();
 
-        Administrador admin = usuarioController.getAdminPadrao();
-        if (user.equals(admin.getNome()) && senha.equals("admin")) {
+        if ("admin".equals(user) && "admin".equals(senha)) {
+            Administrador admin = usuarioController.getAdminPadrao();
             cinemaController.setAdminLogado(admin);
             cinemaController.setUsuarioLogado(null);
             Terminal.sucesso("Bem-vindo, Administrador!");
@@ -128,6 +128,7 @@ public class CinemaView {
             Terminal.erro("Usuario ou senha incorretos.");
             return;
         }
+
         cinemaController.setUsuarioLogado(u);
         cinemaController.setAdminLogado(null);
 
@@ -139,9 +140,8 @@ public class CinemaView {
         } else {
             tipoMsg = " [Usuario Comum]";
         }
-        cinemaController.setUsuarioLogado(u);
-        Terminal.sucesso("Bem-vindo, " + u.getUser() + "!" + tipoMsg);
 
+        Terminal.sucesso("Bem-vindo, " + u.getUser() + "!" + tipoMsg);
         menuPrincipal();
         cinemaController.setUsuarioLogado(null);
     }
@@ -255,6 +255,7 @@ public class CinemaView {
     private void fluxoCompra() {
         exibirIdentidade();
         inicializarSalas();
+
         Sala sala = escolherSala();
         if (sala == null) return;
 
@@ -269,12 +270,14 @@ public class CinemaView {
         Terminal.secao("Filmes Disponiveis");
         for (int i = 0; i < qtdFilmes; i++) {
             System.out.printf("  %d. %-30s %dmin  R$ %.2f  Nota: %.1f%n",
-                i + 1, filmes[i].getNome(), filmes[i].getDuracao(),
-                filmes[i].getValor(), filmes[i].getNota());
+                    i + 1, filmes[i].getNome(), filmes[i].getDuracao(),
+                    filmes[i].getValor(), filmes[i].getNota());
         }
+
         Terminal.separador();
         System.out.print("  Escolha o filme: ");
         int idxFilme = lerInt() - 1;
+
         if (idxFilme < 0 || idxFilme >= qtdFilmes) {
             Terminal.erro("Filme invalido.");
             return;
@@ -288,25 +291,28 @@ public class CinemaView {
 
         Terminal.secao("Horarios Disponiveis -- " + filmeSelecionado.getNome());
         for (int i = 0; i < sessoes.length; i++) {
-            if (sessoes[i] != null && sessoes[i].isEmCartaz()) {
-                sessoes[i].setFilme(filmeSelecionado);
+            if (sessoes[i] != null
+                    && sessoes[i].isEmCartaz()
+                    && sessoes[i].getFilme() != null
+                    && sessoes[i].getFilme().getNome().equalsIgnoreCase(filmeSelecionado.getNome())) {
                 System.out.printf("  %d. %s  R$ %5.2f  [DISPONIVEL]%n",
-                    contador + 1,
-                    sessoes[i].getHorario(),
-                    sala.calcularValorBilhete(filmeSelecionado.getValor()));
+                        contador + 1,
+                        sessoes[i].getHorario(),
+                        sala.calcularValorBilhete(filmeSelecionado.getValor()));
                 indicesValidos[contador] = i;
                 contador++;
             }
         }
 
         if (contador == 0) {
-            Terminal.aviso("Nenhum horario disponivel para este filme.");
+            Terminal.aviso("Nenhum horario disponivel para este filme nesta sala.");
             return;
         }
 
         Terminal.separador();
         System.out.print("  Escolha o horario: ");
         int escolha = lerInt() - 1;
+
         if (escolha < 0 || escolha >= contador) {
             Terminal.erro("Horario invalido.");
             return;
@@ -316,6 +322,7 @@ public class CinemaView {
 
         System.out.print("  Quantos bilhetes? ");
         int qtd = lerInt();
+
         if (qtd <= 0) {
             Terminal.erro("Quantidade invalida.");
             return;
@@ -329,13 +336,19 @@ public class CinemaView {
                 exibirMapa(sessao);
                 System.out.print("  Fileira (A-J): ");
                 String fileiraStr = scanner.nextLine().toUpperCase().trim();
-                if (fileiraStr.isEmpty()) { Terminal.erro("Fileira invalida."); return; }
+
+                if (fileiraStr.isEmpty()) {
+                    Terminal.erro("Fileira invalida.");
+                    return;
+                }
+
                 char fileira = fileiraStr.charAt(0);
                 System.out.print("  Coluna (1-15): ");
                 int coluna = lerInt() - 1;
 
                 Bilhete bilhete = cinemaController.comprarBilhete(sessao, sala, fileira - 'A', coluna, cupom);
                 compra.comprarBilhetes(bilhete);
+
                 Terminal.sucesso("Compra realizada!");
                 System.out.println("  " + bilhete);
             } else {

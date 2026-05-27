@@ -4,6 +4,7 @@ import model.strategy.EstrategiaPreco;
 import model.strategy.PrecoComum;
 
 public class Usuario {
+
     private String user;
     private String cpf;
     private String senha;
@@ -16,13 +17,13 @@ public class Usuario {
     private EstrategiaPreco estrategiaPreco;
 
     public Usuario(String user, String cpf, String senha, int idade, char sexo, String email,
-        String nomeCartao, String numeroCartao, String codigoCartao) {
+            String nomeCartao, String numeroCartao, String codigoCartao) {
         this(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, new PrecoComum());
     }
 
-    public Usuario(String user, String cpf, String senha, int idade, char sexo, String email, 
-        String nomeCartao, String numeroCartao, String codigoCartao,
-        EstrategiaPreco estrategiaPreco) {
+    public Usuario(String user, String cpf, String senha, int idade, char sexo, String email,
+            String nomeCartao, String numeroCartao, String codigoCartao,
+            EstrategiaPreco estrategiaPreco) {
         this.user = user;
         this.cpf = cpf;
         this.senha = senha;
@@ -39,8 +40,8 @@ public class Usuario {
         return estrategiaPreco;
     }
 
-    public void setEstrategiaPreco(EstrategiaPreco estrategiaPreco) {
-        this.estrategiaPreco = estrategiaPreco;
+    public void setEstrategiaPreco(EstrategiaPreco e) {
+        this.estrategiaPreco = e;
     }
 
     public String getUser() {
@@ -138,7 +139,8 @@ public class Usuario {
     }
 
     protected Bilhete criarBilhete(Sala sala, Sessao sessao, int linha, int coluna, double valorFinal) {
-        return new Bilhete(this, sala, sessao, sessao.getFilme(), valorFinal, sessao.formatarCadeira(linha, coluna));
+        return new Bilhete(this, sala, sessao, sessao.getFilme(), valorFinal,
+                sessao.formatarCadeira(linha, coluna));
     }
 
     @Override

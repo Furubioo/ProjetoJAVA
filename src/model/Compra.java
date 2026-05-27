@@ -7,11 +7,14 @@ public class Compra {
     private Bilhete[] bilhetes;
     private int qtdBilhetes;
 
+    private static final int MAX_ITENS = 15;
+
+
     public Compra() {
-        this.produtos = new Produto[15];
-        this.precosProdutos = new double[15];
+        this.produtos = new Produto[MAX_ITENS];
+        this.precosProdutos = new double[MAX_ITENS];
         this.qtdProdutos = 0;
-        this.bilhetes = new Bilhete[15];
+        this.bilhetes = new Bilhete[MAX_ITENS];
         this.qtdBilhetes = 0;
     }
 
@@ -52,8 +55,9 @@ public class Compra {
     }
 
     public void setQtdBilhetes(int qtdBilhetes) {
-        this.qtdBilhetes = qtdBilhetes;
+        this.qtdBilhetes = qtdBilhetes; 
     }
+
 
     public void adicionarProduto(Produto produto) {
         adicionarProduto(produto, CupomPromocional.NENHUM);
@@ -75,16 +79,14 @@ public class Compra {
     }
 
     public void comprarBilhetes(Bilhete novoBilhete, CupomPromocional cupom) {
-        novoBilhete.setValor(novoBilhete.getValor() * (1 - cupom.getDesconto()));
+        novoBilhete.setValor(novoBilhete.getValor() * (1.0 - cupom.getDesconto()));
         adicionarBilhete(novoBilhete);
     }
 
     private void adicionarBilhete(Bilhete novoBilhete) {
         if (qtdBilhetes >= bilhetes.length) {
-            System.out.println("Nao e mais possivel comprar bilhetes.");
-            return;
+            throw new IllegalStateException("Limite máximo de bilhetes por compra atingido (" + bilhetes.length + ").");
         }
-
         bilhetes[qtdBilhetes++] = novoBilhete;
     }
 

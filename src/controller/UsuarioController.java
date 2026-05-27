@@ -15,17 +15,13 @@ public class UsuarioController {
         this.usuarios = new Usuario[MAX];
         this.qtdUsuarios = 0;
         this.adminPadrao = new Administrador("admin", 0, "admin@cinema.com", 0.0, "ADM001");
+
     }
 
     public void carregarUsuarios() {
         int[] qtdLida = new int[1];
         this.usuarios = PersistenciaArquivo.carregarUsuarios(qtdLida);
         this.qtdUsuarios = qtdLida[0];
-    }
-
-    public void salvarUsuarios() {
-        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
-        admin.persistirUsuarios(usuarios, qtdUsuarios);
     }
 
     public void adicionarUsuario(Usuario usuario) {
@@ -37,12 +33,21 @@ public class UsuarioController {
         }
     }
 
+    public void salvarUsuarios() {
+        PersistenciaArquivo.salvarUsuarios(usuarios, qtdUsuarios);
+    }
+
     public void excluirUsuario(String email) {
-        Administrador admin = new Administrador("sistema", 0, "sistema@cinema.com", 0, "SYS");
-        int[] qtd = { qtdUsuarios };
-        admin.excluirUsuario(usuarios, qtd, email);
-        qtdUsuarios = qtd[0];
-        salvarUsuarios();
+        for (int i = 0; i < qtdUsuarios; i++) {
+            if (usuarios[i].getEmail().equalsIgnoreCase(email)) {
+                for (int j = i; j < qtdUsuarios - 1; j++) {
+                    usuarios[j] = usuarios[j + 1];
+                }
+                usuarios[--qtdUsuarios] = null;
+                salvarUsuarios();
+                return;
+            }
+        }
     }
 
     public Usuario buscarPorLogin(String user, String senha) {

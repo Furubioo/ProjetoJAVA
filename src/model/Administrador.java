@@ -1,25 +1,28 @@
 package model;
 
-public class Administrador extends Base implements GerenciaDeFilmes {
+public class Administrador extends Funcionario {
 
-    private double salario;
     private String id;
 
     public Administrador(String nome, int idade, String email, double salario, String id) {
-        super(nome, idade, email);
-        this.salario = salario;
+        super(nome, idade, email, salario); 
         this.id = id;
     }
 
-    public double getSalario() { return salario; }
-    public void setSalario(double salario) { this.salario = salario; }
+    public String getId() {
+        return id;
+    }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     @Override
     public void adicionarUsuario(Base usuario) {
-        System.out.println("[Admin] Usuario adicionado: " + usuario.getNome());
+        if (usuario != null) {
+            System.out.println("[Admin] Usuário adicionado: " + usuario.getNome()
+                    + " | Email: " + usuario.getEmail());
+        }
     }
 
     @Override
@@ -27,6 +30,7 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         setNome(novoNome);
         setIdade(novaIdade);
         setEmail(novoEmail);
+        System.out.println("[Admin] Dados do admin atualizados.");
     }
 
     public void excluirUsuario(Usuario[] usuarios, int[] qtd, String email) {
@@ -36,11 +40,11 @@ public class Administrador extends Base implements GerenciaDeFilmes {
                     usuarios[j] = usuarios[j + 1];
                 }
                 usuarios[--qtd[0]] = null;
-                System.out.println("[Admin] Usuário removido: " + email);
+                System.out.println("[Admin] Usuario removido: " + email);
                 return;
             }
         }
-        System.out.println("[Admin] Usuário não encontrado: " + email);
+        System.out.println("[Admin] Usuario nao encontrado: " + email);
     }
 
     @Override
@@ -66,9 +70,9 @@ public class Administrador extends Base implements GerenciaDeFilmes {
         PersistenciaArquivo.salvarUsuarios(usuarios, qtd);
     }
 
-    @Override
+@Override
     public String toString() {
-        return super.toString() + " | Salario: R$ " + String.format("%.2f", salario)
+        return super.toString().replace(" [Funcionário]", "")
                 + " | ID: " + id + " [Administrador]";
     }
 }

@@ -10,9 +10,9 @@ public class Main {
         System.setOut(new PrintStream(System.out, true, "UTF-8"));
         System.setErr(new PrintStream(System.err, true, "UTF-8"));
 
-        FilmeController filmeController = new FilmeController();
+        FilmeController filmeController = new FilmeController();     // ← manter
         UsuarioController usuarioController = new UsuarioController();
-        CinemaController cinemaController = new CinemaController(filmeController);
+        CinemaController cinemaController = new CinemaController();  // ← sem parâmetro agora
 
         filmeController.carregarFilmes();
         usuarioController.carregarUsuarios();

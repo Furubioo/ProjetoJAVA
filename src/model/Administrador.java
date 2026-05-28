@@ -5,7 +5,7 @@ public class Administrador extends Funcionario {
     private String id;
 
     public Administrador(String nome, int idade, String email, double salario, String id) {
-        super(nome, idade, email, salario); 
+        super(nome, idade, email, salario);
         this.id = id;
     }
 
@@ -70,7 +70,7 @@ public class Administrador extends Funcionario {
         PersistenciaArquivo.salvarUsuarios(usuarios, qtd);
     }
 
-@Override
+    @Override
     public String toString() {
         return super.toString().replace(" [Funcionário]", "")
                 + " | ID: " + id + " [Administrador]";

@@ -14,9 +14,7 @@ epadrões de Projeto).
 ## Estrutura do Repositório
 
 ```
-cinema-system/
-├── src/                  # Versão sem frontend (Java puro)
-└── cinema-web/
+cinema-system/               # Versão sem frontend (Java puro)
     ├── cinema-backend/   # Spring Boot
     └── cinema-frontend/  # React + Vite
 ```

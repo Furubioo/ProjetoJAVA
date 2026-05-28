@@ -16,10 +16,11 @@ public enum Produto {
         this.preco = preco;
     }
 
-    public String getNome() { 
-        return nome; 
+    public String getNome() {
+        return nome;
     }
+
     public double getPreco() {
-        return preco; 
+        return preco;
     }
 }

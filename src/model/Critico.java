@@ -6,13 +6,18 @@ public class Critico extends Usuario {
     private String origem;
 
     public Critico(String user, String cpf, String senha, int idade, char sexo, String email,
-        String nomeCartao, String numeroCartao, String codigoCartao, String origem) {
+            String nomeCartao, String numeroCartao, String codigoCartao, String origem) {
         super(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, new PrecoCritico());
         this.origem = origem;
     }
 
-    public String getOrigem() { return origem; }
-    public void setOrigem(String origem) { this.origem = origem; }
+    public String getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(String origem) {
+        this.origem = origem;
+    }
 
     public void atribuirNota(Filme filme, double nota) {
         if (nota < 0 || nota > 10) {
@@ -41,7 +46,7 @@ public class Critico extends Usuario {
     public void atribuirCritica(Filme filme, String critica) {
         atribuirCritica(critica, filme);
     }
-    
+
     @Override
     public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
         double valorFinal = 0.0; // entrada gratuita garantida

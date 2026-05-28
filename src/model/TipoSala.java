@@ -15,15 +15,15 @@ public enum TipoSala {
     }
 
     public String getTipo() {
-        return tipo; 
+        return tipo;
     }
-    
+
     public double getMultiplicador() {
-        return multiplicador; 
+        return multiplicador;
     }
 
     @Override
-    public String toString() { 
-        return tipo; 
+    public String toString() {
+        return tipo;
     }
 }

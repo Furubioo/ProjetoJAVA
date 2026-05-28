@@ -57,8 +57,8 @@ public class UsuarioController {
         return null;
     }
 
-    public Usuario[] getUsuarios() { 
-        return usuarios; 
+    public Usuario[] getUsuarios() {
+        return usuarios;
     }
 
     public Administrador getAdminPadrao() {
@@ -68,8 +68,8 @@ public class UsuarioController {
     public void setAdminpadrao(Administrador adminPadrao) {
         this.adminPadrao = adminPadrao;
     }
-    
-    public int getQtdUsuarios() { 
-        return qtdUsuarios; 
+
+    public int getQtdUsuarios() {
+        return qtdUsuarios;
     }
 }

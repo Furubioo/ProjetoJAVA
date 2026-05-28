@@ -59,7 +59,7 @@ public class CinemaController {
     public Bilhete[] comprarMultiplosBilhetes(Sessao sessao, Sala sala, int quantidade,
             Scanner scanner) throws VendasException {
         validarQuantidade(quantidade);
-        validarSessao(sessao); 
+        validarSessao(sessao);
 
         int[] sugestao = sugerirCadeirasJuntas(sessao, quantidade);
         if (sugestao == null) {
@@ -116,7 +116,7 @@ public class CinemaController {
     }
 
     private void validarSessao(Sessao sessao) throws VendasException {
-        if (!sessao.isEmCartaz() || sessao.horarioJaPassou())
+        if (!sessao.isEmCartaz())
             throw new VendasException(VendasException.TipoErro.SESSAO_JA_PASSOU);
 
         if (sessao.getFilme() == null)

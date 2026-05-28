@@ -49,7 +49,7 @@ public class Critico extends Usuario {
 
     @Override
     public Bilhete comprarBilhete(Sala sala, Sessao sessao, int linha, int coluna) {
-        double valorFinal = 0.0; // entrada gratuita garantida
+        double valorFinal = 0.0; 
         return criarBilhete(sala, sessao, linha, coluna, valorFinal);
     }
 

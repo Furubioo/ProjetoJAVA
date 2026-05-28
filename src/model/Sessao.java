@@ -1,7 +1,5 @@
 package model;
 
-import java.time.LocalTime;
-
 public class Sessao {
     private Filme filme;
     private String horario;
@@ -15,20 +13,41 @@ public class Sessao {
         this.emCartaz = true;
     }
 
-    public Filme getFilme() { return filme; }
-    public void setFilme(Filme filme) { this.filme = filme; }
+    public Filme getFilme() {
+        return filme;
+    }
 
-    public String getHorario() { return horario; }
-    public void setHorario(String h) { this.horario = h; }
+    public void setFilme(Filme filme) {
+        this.filme = filme;
+    }
 
-    public boolean[][] getCadeiras() { return cadeiras; }
-    public void setCadeiras(boolean[][] c) { this.cadeiras = c; }
+    public String getHorario() {
+        return horario;
+    }
 
-    public boolean isEmCartaz() { return emCartaz; }
-    public void setEmCartaz(boolean b) { this.emCartaz = b; }
+    public void setHorario(String h) {
+        this.horario = h;
+    }
+
+    public boolean[][] getCadeiras() {
+        return cadeiras;
+    }
+
+    public void setCadeiras(boolean[][] c) {
+        this.cadeiras = c;
+    }
+
+    public boolean isEmCartaz() {
+        return emCartaz;
+    }
+
+    public void setEmCartaz(boolean b) {
+        this.emCartaz = b;
+    }
 
     public boolean cadeiraDisponivel(int linha, int coluna) {
-        if (!posicaoValida(linha, coluna)) return false;
+        if (!posicaoValida(linha, coluna))
+            return false;
         return !cadeiras[linha][coluna];
     }
 
@@ -39,12 +58,7 @@ public class Sessao {
     }
 
     public boolean horarioJaPassou() {
-        try {
-            LocalTime horarioSessao = LocalTime.parse(this.horario);
-            return LocalTime.now().isAfter(horarioSessao);
-        } catch (Exception e) {
-            return false;
-        }
+        return false;
     }
 
     public String formatarCadeira(int linha, int coluna) {
@@ -53,12 +67,12 @@ public class Sessao {
 
     private boolean posicaoValida(int linha, int coluna) {
         return linha >= 0 && linha < cadeiras.length
-            && coluna >= 0 && coluna < cadeiras[linha].length;
+                && coluna >= 0 && coluna < cadeiras[linha].length;
     }
 
     @Override
     public String toString() {
         return "Sessao[" + (filme != null ? filme.getNome() : "sem filme")
-            + " | " + horario + " | " + (emCartaz ? "em cartaz" : "encerrada") + "]";
+                + " | " + horario + " | " + (emCartaz ? "em cartaz" : "encerrada") + "]";
     }
 }

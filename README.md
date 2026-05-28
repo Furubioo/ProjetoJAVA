@@ -32,7 +32,7 @@ cinema-system/               # Versão com frontend
 ### Estrutura do projeto
 
 ```
-src/                # Versão com frontend
+src/                # Versão sem frontend
 ├── controller/
 │   ├── CinemaController.java
 │   ├── FilmeController.java

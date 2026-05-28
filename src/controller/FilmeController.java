@@ -21,16 +21,17 @@ public class FilmeController {
             this.filmes = carregados;
             this.qtdFilmes = qtdLida[0];
         } else {
-            carregarFilmesPadrao(); 
+            carregarFilmesPadrao();
         }
     }
 
     private void carregarFilmesPadrao() {
-        filmes[qtdFilmes++] = new Filme("Gato de Botas 2",           102, "As aventuras do Gato de Botas continuam.",          20.00);
-        filmes[qtdFilmes++] = new Filme("Avatar: O Caminho da Agua", 192, "Jake Sully vive com sua nova familia formada.",      22.00);
-        filmes[qtdFilmes++] = new Filme("John Wick 4",               169, "John Wick enfrenta seus inimigos mais poderosos.",   21.00);
-        filmes[qtdFilmes++] = new Filme("Creed III",                 116, "Adonis Creed enfrenta um rival do passado.",         19.00);
-        filmes[qtdFilmes++] = new Filme("Panico VI",                 123, "O retorno do Ghostface em Nova York.",               18.00);
+        filmes[qtdFilmes++] = new Filme("Gato de Botas 2", 102, "As aventuras do Gato de Botas continuam.", 20.00);
+        filmes[qtdFilmes++] = new Filme("Avatar: O Caminho da Agua", 192,
+                "Jake Sully vive com sua nova familia formada.", 22.00);
+        filmes[qtdFilmes++] = new Filme("John Wick 4", 169, "John Wick enfrenta seus inimigos mais poderosos.", 21.00);
+        filmes[qtdFilmes++] = new Filme("Creed III", 116, "Adonis Creed enfrenta um rival do passado.", 19.00);
+        filmes[qtdFilmes++] = new Filme("Panico VI", 123, "O retorno do Ghostface em Nova York.", 18.00);
         PersistenciaArquivo.salvarFilmes(filmes, qtdFilmes);
     }
 
@@ -42,8 +43,7 @@ public class FilmeController {
         if (qtdFilmes < MAX) {
             filmes[qtdFilmes++] = filme;
             salvarFilmes();
-        } 
-        else {
+        } else {
             System.out.println("Catálogo cheio.");
         }
     }
@@ -75,11 +75,12 @@ public class FilmeController {
         System.out.println("Filme não encontrado: " + nome);
     }
 
-    public Filme[] getFilmes() { 
-        return filmes; 
+    public Filme[] getFilmes() {
+        return filmes;
     }
-    public int getQtdFilmes() { 
-        return qtdFilmes; 
+
+    public int getQtdFilmes() {
+        return qtdFilmes;
     }
 
     public Filme buscarFilme(String nome) {

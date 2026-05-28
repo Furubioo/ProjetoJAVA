@@ -9,7 +9,6 @@ public class Compra {
 
     private static final int MAX_ITENS = 15;
 
-
     public Compra() {
         this.produtos = new Produto[MAX_ITENS];
         this.precosProdutos = new double[MAX_ITENS];
@@ -55,9 +54,8 @@ public class Compra {
     }
 
     public void setQtdBilhetes(int qtdBilhetes) {
-        this.qtdBilhetes = qtdBilhetes; 
+        this.qtdBilhetes = qtdBilhetes;
     }
-
 
     public void adicionarProduto(Produto produto) {
         adicionarProduto(produto, CupomPromocional.NENHUM);

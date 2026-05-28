@@ -19,19 +19,21 @@ public class Bilhete {
         this.cadeira = cadeira;
     }
 
-    public Usuario getUser() { 
+    public Usuario getUser() {
         return user;
     }
+
     public void setUser(Usuario user) {
-        this.user = user; this.cpf = user.getCpf(); 
+        this.user = user;
+        this.cpf = user.getCpf();
     }
 
     public String getCpf() {
-        return cpf; 
+        return cpf;
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf; 
+        this.cpf = cpf;
     }
 
     public Sala getSala() {
@@ -39,19 +41,19 @@ public class Bilhete {
     }
 
     public void setSala(Sala sala) {
-        this.sala = sala; 
+        this.sala = sala;
     }
 
     public Sessao getSessao() {
-        return sessao; 
+        return sessao;
     }
 
     public void setSessao(Sessao sessao) {
-        this.sessao = sessao; 
+        this.sessao = sessao;
     }
 
     public Filme getFilme() {
-        return filme; 
+        return filme;
     }
 
     public void setFilme(Filme filme) {
@@ -59,28 +61,28 @@ public class Bilhete {
     }
 
     public double getValor() {
-        return valor; 
+        return valor;
     }
 
-    public void setValor(double valor) { 
-        this.valor = valor; 
+    public void setValor(double valor) {
+        this.valor = valor;
     }
 
     public String getCadeira() {
-        return cadeira; 
+        return cadeira;
     }
 
     public void setCadeira(String cadeira) {
-        this.cadeira = cadeira; 
+        this.cadeira = cadeira;
     }
 
     @Override
     public String toString() {
         return "Bilhete[" + filme.getNome() +
-               " | Sala: " + sala.getTipo().getTipo() +
-               " | Sessão: " + sessao.getHorario() +
-               " | Cadeira: " + cadeira +
-               " | CPF: " + cpf +
-               " | Valor: R$ " + String.format("%.2f", valor) + "]";
+                " | Sala: " + sala.getTipo().getTipo() +
+                " | Sessão: " + sessao.getHorario() +
+                " | Cadeira: " + cadeira +
+                " | CPF: " + cpf +
+                " | Valor: R$ " + String.format("%.2f", valor) + "]";
     }
 }

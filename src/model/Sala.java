@@ -3,8 +3,8 @@ package model;
 public class Sala {
 
     public static final String[] HORARIOS = {
-        "08:00", "09:30", "11:00", "12:30", "14:00",
-        "15:30", "17:00", "18:30", "20:00", "21:30", "23:00"
+            "08:00", "09:30", "11:00", "12:30", "14:00",
+            "15:30", "17:00", "18:30", "20:00", "21:30", "23:00"
     };
 
     private static final int TOTAL_SESSOES = HORARIOS.length;
@@ -48,7 +48,8 @@ public class Sala {
     }
 
     public Sessao buscarSessao(int indice) {
-        if (indice < 0 || indice >= TOTAL_SESSOES) return null;
+        if (indice < 0 || indice >= TOTAL_SESSOES)
+            return null;
         return listaSessoes[indice];
     }
 

@@ -28,7 +28,8 @@ public class CinemaView {
     private Sala[] salas;
     private boolean salasInicializadas = false;
 
-    public CinemaView(CinemaController cinemaController, FilmeController filmeController, UsuarioController usuarioController) {
+    public CinemaView(CinemaController cinemaController, FilmeController filmeController,
+            UsuarioController usuarioController) {
         this.cinemaController = cinemaController;
         this.filmeController = filmeController;
         this.usuarioController = usuarioController;
@@ -45,7 +46,8 @@ public class CinemaView {
     }
 
     private void inicializarSalas() {
-        if (salasInicializadas) return;
+        if (salasInicializadas)
+            return;
         TipoSala[] tipos = TipoSala.values();
         salas = new Sala[tipos.length];
         Filme[] filmes = filmeController.getFilmes();
@@ -55,7 +57,7 @@ public class CinemaView {
             for (int i = 0; i < Sala.HORARIOS.length; i++) {
                 if (qtdFilmes > 0) {
                     salas[s].adicionarSessao(
-                        new Sessao(filmes[i % qtdFilmes], Sala.HORARIOS[i]), i);
+                            new Sessao(filmes[i % qtdFilmes], Sala.HORARIOS[i]), i);
                 }
             }
         }
@@ -66,24 +68,24 @@ public class CinemaView {
         Usuario u = cinemaController.getUsuarioLogado();
         if (cinemaController.isAdminLogado()) {
             System.out.println(Terminal.AMARELO + Terminal.BOLD
-                + "  [Logado como: Administrador]"
-                + Terminal.RESET);
+                    + "  [Logado como: Administrador]"
+                    + Terminal.RESET);
         } else if (u instanceof Critico) {
             Critico c = (Critico) u;
             System.out.println(Terminal.CIANO + Terminal.BOLD
-                + "  [Logado como: " + u.getUser()
-                + " | Critico - " + c.getOrigem() + " | entrada gratuita]"
-                + Terminal.RESET);
+                    + "  [Logado como: " + u.getUser()
+                    + " | Critico - " + c.getOrigem() + " | entrada gratuita]"
+                    + Terminal.RESET);
         } else if (u instanceof Estudante) {
             System.out.println(Terminal.VERDE + Terminal.BOLD
-                + "  [Logado como: " + u.getUser()
-                + " | Estudante - meia-entrada automatica]"
-                + Terminal.RESET);
+                    + "  [Logado como: " + u.getUser()
+                    + " | Estudante - meia-entrada automatica]"
+                    + Terminal.RESET);
         } else if (u != null) {
             System.out.println(Terminal.BRANCO + Terminal.BOLD
-                + "  [Logado como: " + u.getUser()
-                + " | Usuario Comum]"
-                + Terminal.RESET);
+                    + "  [Logado como: " + u.getUser()
+                    + " | Usuario Comum]"
+                    + Terminal.RESET);
         }
     }
 
@@ -177,13 +179,16 @@ public class CinemaView {
 
         Usuario novoUsuario;
         switch (tipo) {
-            case 2 -> novoUsuario = new model.Estudante(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
+            case 2 -> novoUsuario = new model.Estudante(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao,
+                    codigoCartao);
             case 3 -> {
                 System.out.print("  Origem (veiculo de critica): ");
                 String origem = scanner.nextLine();
-                novoUsuario = new model.Critico(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao, origem);
+                novoUsuario = new model.Critico(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao,
+                        codigoCartao, origem);
             }
-            default -> novoUsuario = new Usuario(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
+            default ->
+                novoUsuario = new Usuario(user, cpf, senha, idade, sexo, email, nomeCartao, numeroCartao, codigoCartao);
         }
 
         usuarioController.adicionarUsuario(novoUsuario);
@@ -213,7 +218,8 @@ public class CinemaView {
                     }
                 }
                 case 3 -> menuGerenciarFilmes();
-                case 0 -> {}
+                case 0 -> {
+                }
                 default -> Terminal.aviso("Opcao invalida.");
             }
         } while (opcao != 0);
@@ -230,7 +236,7 @@ public class CinemaView {
         for (int i = 0; i < qtd; i++) {
             Filme f = filmes[i];
             System.out.printf("  %d. %-30s %dmin  R$ %.2f  Nota: %.1f%n",
-                i + 1, f.getNome(), f.getDuracao(), f.getValor(), f.getNota());
+                    i + 1, f.getNome(), f.getDuracao(), f.getValor(), f.getNota());
             System.out.printf("     Sinopse: %s%n", f.getSinopse());
         }
         Terminal.separador();
@@ -247,7 +253,7 @@ public class CinemaView {
         for (int i = 0; i < qtd; i++) {
             Filme f = filmes[i];
             System.out.printf("  %d. %-30s %dmin  R$ %5.2f  Nota: %.1f%n",
-                i + 1, f.getNome(), f.getDuracao(), f.getValor(), f.getNota());
+                    i + 1, f.getNome(), f.getDuracao(), f.getValor(), f.getNota());
         }
         Terminal.separador();
     }
@@ -257,7 +263,8 @@ public class CinemaView {
         inicializarSalas();
 
         Sala sala = escolherSala();
-        if (sala == null) return;
+        if (sala == null)
+            return;
 
         Filme[] filmes = filmeController.getFilmes();
         int qtdFilmes = filmeController.getQtdFilmes();
@@ -356,7 +363,8 @@ public class CinemaView {
                 exibirMapa(sessao);
 
                 Bilhete[] bilhetes = cinemaController.comprarMultiplosBilhetes(sessao, sala, qtd, cupom, scanner);
-                if (bilhetes.length == 0) return;
+                if (bilhetes.length == 0)
+                    return;
 
                 Terminal.sucesso(qtd + " bilhetes comprados!");
                 for (Bilhete b : bilhetes) {
@@ -377,7 +385,8 @@ public class CinemaView {
 
     private void adicionarProdutosAoCarrinho(Compra compra, CupomPromocional cupom) {
         System.out.print("\n  Deseja adicionar produtos de balcao? (S/N): ");
-        if (!scanner.nextLine().equalsIgnoreCase("S")) return;
+        if (!scanner.nextLine().equalsIgnoreCase("S"))
+            return;
 
         boolean continuar = true;
         while (continuar) {
@@ -405,7 +414,7 @@ public class CinemaView {
         Terminal.secao("Escolha a Sala");
         for (int i = 0; i < salas.length; i++)
             System.out.printf("  %d. %-10s (multiplicador x%.1f)%n",
-                i + 1, salas[i].getTipo().getTipo(), salas[i].getTipo().getMultiplicador());
+                    i + 1, salas[i].getTipo().getTipo(), salas[i].getTipo().getMultiplicador());
         Terminal.separador();
         System.out.print("  Escolha: ");
         int op = lerInt() - 1;
@@ -437,7 +446,7 @@ public class CinemaView {
         }
         System.out.println();
         System.out.println(Terminal.VERDE + "  O = livre  " + Terminal.RESET +
-                           Terminal.VERMELHO + "  X = ocupado" + Terminal.RESET);
+                Terminal.VERMELHO + "  X = ocupado" + Terminal.RESET);
         Terminal.separador();
     }
 
@@ -479,7 +488,8 @@ public class CinemaView {
                 case 1 -> incluirFilme();
                 case 2 -> excluirFilme();
                 case 3 -> alterarFilme();
-                case 0 -> {}
+                case 0 -> {
+                }
                 default -> Terminal.aviso("Opcao invalida.");
             }
         } while (opcao != 0);
@@ -502,7 +512,8 @@ public class CinemaView {
 
     private void excluirFilme() {
         listarFilmesParaGerencia();
-        if (filmeController.getQtdFilmes() == 0) return;
+        if (filmeController.getQtdFilmes() == 0)
+            return;
         System.out.print("  Nome do filme a excluir: ");
         String nome = scanner.nextLine();
         filmeController.excluirFilme(nome);
@@ -511,7 +522,8 @@ public class CinemaView {
 
     private void alterarFilme() {
         listarFilmesParaGerencia();
-        if (filmeController.getQtdFilmes() == 0) return;
+        if (filmeController.getQtdFilmes() == 0)
+            return;
         System.out.print("  Nome atual do filme: ");
         String nome = scanner.nextLine();
         System.out.print("  Novo nome: ");

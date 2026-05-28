@@ -21,7 +21,7 @@ cinema-system/               # Versão com frontend
 
 ---
 
-## src (Java puro)
+## cinema-console
 
 ### Como executar
 

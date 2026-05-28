@@ -12,33 +12,34 @@ public abstract class Base {
         this.email = email;
     }
 
-    public String getNome() { 
-        return nome; 
+    public String getNome() {
+        return nome;
     }
 
-    public void setNome(String nome) { 
-        this.nome = nome; 
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public int getIdade() {
-        return idade; 
+        return idade;
     }
 
-    public void setIdade(int idade) { 
-        this.idade = idade; 
+    public void setIdade(int idade) {
+        this.idade = idade;
     }
 
-    public String getEmail() { 
-        return email; 
+    public String getEmail() {
+        return email;
     }
-    
-    public void setEmail(String email) { 
-        this.email = email; 
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public abstract void adicionarUsuario(Base usuario);
+
     public abstract void alterarUsuario(String novoNome, int novaIdade, String novoEmail);
-    
+
     @Override
     public String toString() {
         return "Nome: " + nome + " | Idade: " + idade + " | Email: " + email;

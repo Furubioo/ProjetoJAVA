@@ -1,0 +1,5 @@
+Gato de Botas 2|102|As aventuras do Gato de Botas continuam.|20.0|0.0|0
+Avatar: O Caminho da Agua|192|Jake Sully vive com sua nova familia formada.|22.0|0.0|0
+John Wick 4|169|John Wick enfrenta seus inimigos mais poderosos.|21.0|0.0|0
+Creed III|116|Adonis Creed enfrenta um rival do passado.|19.0|0.0|0
+Panico VI|123|O retorno do Ghostface em Nova York.|18.0|0.0|0

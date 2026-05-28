@@ -18,61 +18,65 @@ public class Filme {
         this.quantidade_criticos = 0;
     }
 
-    public String getNome() { 
-        return nome; 
+    public String getNome() {
+        return nome;
     }
 
-    public void setNome(String nome) { 
-        this.nome = nome; 
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public int getDuracao() {
-        return duracao;  
+        return duracao;
     }
 
     public void setDuracao(int duracao) {
-        this.duracao = duracao; 
+        this.duracao = duracao;
     }
 
-    public String getSinopse() { 
+    public String getSinopse() {
         return sinopse;
     }
-    public void setSinopse(String sinopse) { 
-        this.sinopse = sinopse; 
+
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
     }
 
-    public double getValor() { 
-        return valor; 
+    public double getValor() {
+        return valor;
     }
 
     public void setValor(double valor) {
-        this.valor = valor; 
+        this.valor = valor;
     }
 
     public double getNota() {
         return nota;
     }
 
-    public void setNota(double nota) { 
+    public void setNota(double nota) {
         this.nota = nota;
     }
 
-    public int getQuantidade_criticos() { 
+    public int getQuantidade_criticos() {
         return quantidade_criticos;
     }
+
     public void setQuantidade_criticos(int quantidade_criticos) {
-        this.quantidade_criticos = quantidade_criticos; 
+        this.quantidade_criticos = quantidade_criticos;
     }
 
     public Critica[] getVetorcriticas() {
-        return vetorcriticas; 
+        return vetorcriticas;
     }
+
     public void setVetorcriticas(Critica[] vetorcriticas) {
         this.vetorcriticas = vetorcriticas;
     }
 
     @Override
     public String toString() {
-        return nome + " | " + duracao + "min | R$ " + String.format("%.2f", valor) + " | Nota: " + String.format("%.1f", nota);
+        return nome + " | " + duracao + "min | R$ " + String.format("%.2f", valor) + " | Nota: "
+                + String.format("%.1f", nota);
     }
 }

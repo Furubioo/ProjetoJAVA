@@ -20,7 +20,8 @@ public class Terminal {
         try {
             System.setOut(new PrintStream(System.out, true, "UTF-8"));
             System.setErr(new PrintStream(System.err, true, "UTF-8"));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public static void sucesso(String msg) {
@@ -44,7 +45,7 @@ public class Terminal {
         String linha = "=".repeat(largura);
         System.out.println();
         System.out.println(AZUL + BOLD + "+" + linha + "+");
-        System.out.printf( AZUL + BOLD + "|  %-" + (largura - 2) + "s|%n", msg);
+        System.out.printf(AZUL + BOLD + "|  %-" + (largura - 2) + "s|%n", msg);
         System.out.println(AZUL + BOLD + "+" + linha + "+" + RESET);
     }
 

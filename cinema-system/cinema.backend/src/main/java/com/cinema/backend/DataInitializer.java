@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@SuppressWarnings("null")
+@SuppressWarnings("all")
 public class DataInitializer implements CommandLineRunner {
 
     private final FilmeRepository filmeRepo;

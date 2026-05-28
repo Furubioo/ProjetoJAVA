@@ -12,23 +12,23 @@ public class Critica {
     }
 
     public String getNome() {
-        return nome; 
+        return nome;
     }
 
     public void setNome(String nome) {
-        this.nome = nome; 
+        this.nome = nome;
     }
 
     public String getOrigem() {
-        return origem; 
-    }
-    
-    public void setOrigem(String origem) {
-     this.origem = origem; 
+        return origem;
     }
 
-    public String getMensagem() { 
-        return mensagem; 
+    public void setOrigem(String origem) {
+        this.origem = origem;
+    }
+
+    public String getMensagem() {
+        return mensagem;
     }
 
     public void setMensagem(String mensagem) {

@@ -8,12 +8,12 @@ public enum CupomPromocional {
 
     private final double desconto;
 
-    CupomPromocional(double desconto) { 
-        this.desconto = desconto; 
+    CupomPromocional(double desconto) {
+        this.desconto = desconto;
     }
 
-    public double getDesconto() { 
-        return desconto; 
+    public double getDesconto() {
+        return desconto;
     }
 
 }

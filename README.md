@@ -77,6 +77,7 @@ src/
 
 **Backend**
 ```bash
+cd cinema.backend
 ./mvnw spring-boot:run
 ```
 
